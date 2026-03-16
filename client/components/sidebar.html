@@ -1,49 +1,143 @@
 <style>
-    .sidebar{
-position: fixed;
-left: 0;
-top: 0;
-height: 100vh;
-width: 230px;
-background:#343a40;
-color:white;
-padding-top:20px;
-overflow-y:auto;
-}
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 230px;
+        background: #1e293b;
+        color: white;
+        padding-top: 20px;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
 
-.sidebar a{
-display:block;
-color:white;
-padding:12px;
-text-decoration:none;
-}
+    .sidebar h4 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+        color: white;
+        padding: 0 10px;
+    }
 
-.sidebar a:hover{
-background:#495057;
-}
+    .sidebar hr {
+        margin: 10px 15px;
+        border-color: #334155;
+    }
 
-.main-content{
-margin-left:230px;
-padding:20px;
-}
+    .sidebar a {
+        display: block;
+        color: #cbd5e1;
+        padding: 12px 20px;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+        font-size: 14px;
+    }
+
+    .sidebar a:hover {
+        background: #334155;
+        color: white;
+        border-left-color: #60a5fa;
+    }
+
+    .sidebar a.active {
+        background: #2563eb;
+        color: white;
+        border-left-color: #fbbf24;
+    }
+
+    .sidebar a i {
+        margin-right: 10px;
+        width: 20px;
+        display: inline-block;
+    }
+
+    .sidebar button {
+        width: calc(100% - 20px);
+        margin: 20px 10px 10px;
+        background: #dc2626;
+        border: none;
+        padding: 10px;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+        font-size: 14px;
+    }
+
+    .sidebar button:hover {
+        background: #b91c1c;
+    }
+
+    .sidebar button i {
+        margin-right: 8px;
+    }
+
+    /* Main content adjustment */
+    .main-content {
+        margin-left: 230px;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 200px;
+        }
+        .main-content {
+            margin-left: 200px;
+        }
+    }
 </style>
 
 <div class="sidebar">
+    <h4>
+        <i class="bi bi-building me-2"></i>Hostel Admin
+    </h4>
+    <hr>
+    
+    <a href="/client/pages/admin-dashboard.html" class="sidebar-link" data-page="dashboard">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+    
+    <a href="/client/pages/admin-students.html" class="sidebar-link" data-page="students">
+        <i class="bi bi-people"></i> Students
+    </a>
+    
+    <a href="/client/rooms/admin-rooms.htm" class="sidebar-link" data-page="rooms">
+        <i class="bi bi-door-open"></i> Rooms
+    </a>
+    
+    <a href="/client/pages/admin-fees.html" class="sidebar-link" data-page="fees">
+        <i class="bi bi-cash"></i> Fees
+    </a>
+    
+    <a href="/client/pages/admin-complaints.html" class="sidebar-link" data-page="complaints">
+        <i class="bi bi-exclamation-triangle"></i> Complaints
+    </a>
+    
+    <a href="/client/pages/admin-attendance.html" class="sidebar-link" data-page="attendance">
+        <i class="bi bi-calendar-check"></i> Attendance
+    </a>
+    
+    <button onclick="logout()" class="btn-danger">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </button>
+</div>
 
-<h4 class="text-center">Hostel Admin</h4>
-<hr>
-
-<a href="/client/pages/admin-dashboard.html">Dashboard</a>
-<a href="/client/pages/admin-students.html">Students</a>
-<a href="/client/rooms/admin-rooms.htm">Rooms</a>
-<a href="/client/pages/admin-fees.html">Fees</a>
-<a href="/client/pages/admin-complaints.html">Complaints</a>
-<a href="/client/pages/admin-attendance.html">Attendance</a>
-
-<button onclick="logout()" class="btn btn-danger w-100 mt-3">
-Logout
-</button>
-
-</div>]
-
-<script src="../js/sidebar.js"></script>
+<script>
+    // Auto-highlight current page
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const links = document.querySelectorAll('.sidebar-link');
+        
+        links.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>

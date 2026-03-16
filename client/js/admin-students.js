@@ -12,24 +12,37 @@ form.addEventListener("submit", async function(e) {
     phone: document.getElementById("phone").value,
     department: document.getElementById("department").value,
     year: document.getElementById("year").value,
+    room_id: document.getElementById("room_id").value,
     password: document.getElementById("password").value
-    // room_id is removed because backend auto-assigns
   };
 
   try {
-    await fetch("http://localhost:5000/api/students/add", {
+
+    const res = await fetch("http://localhost:5000/api/students/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(student)
     });
 
-    showFlash("Student added and room assigned successfully");
+    const data = await res.json();
+
+    if (!res.ok) {
+      showFlash(data.message, "danger");
+      return;
+    }
+
+    showFlash(data.message, "success");
+
     form.reset();
     loadStudents();
+
   } catch (err) {
+
     console.error(err);
-    showFlash("Error adding student", "danger");
+    showFlash("Server error", "danger");
+
   }
+
 });
 
 // ---------------------- Load Students ----------------------
@@ -41,10 +54,10 @@ async function loadStudents() {
     const table = document.getElementById("studentTable");
     table.innerHTML = "";
 
-    studentList.forEach(student => {
-     table.innerHTML += `
+studentList.forEach((student, index) => {
+       table.innerHTML += `
 <tr>
-  <td>${student.student_id}</td>
+<td>${index + 1}</td>
   <td>${student.name}</td>
   <td>${student.email}</td>
   <td>${student.department}</td>
@@ -130,16 +143,36 @@ async function loadRooms() {
     const rooms = await res.json();
 
     const select = document.getElementById("room_id");
-    select.innerHTML = "<option value=''>Select Room (Optional)</option>";
+
+    select.innerHTML = `<option value="">Select Room</option>`;
 
     rooms.forEach(room => {
-      select.innerHTML += `<option value="${room.room_id}">Room ${room.room_number} (Floor ${room.floor_id})</option>`;
+
+      const seatsLeft = room.capacity - room.occupied;
+
+      let option = document.createElement("option");
+      option.value = room.room_id;
+
+      if (seatsLeft <= 0) {
+
+        option.textContent = `Room ${room.room_number} (Floor ${room.floor_id}) - FULL`;
+        option.disabled = true;
+
+      } else {
+
+        option.textContent =
+        `Room ${room.room_number} (Floor ${room.floor_id}) - ${seatsLeft} seats left`;
+
+      }
+
+      select.appendChild(option);
+
     });
+
   } catch (err) {
     console.error(err);
   }
 }
-
 // ---------------------- Flash Message ----------------------
 function showFlash(message, type = "success") {
   const flash = document.getElementById("flashMessage");

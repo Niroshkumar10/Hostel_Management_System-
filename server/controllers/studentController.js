@@ -2,42 +2,59 @@
 // Add student with automatic room assignment
 const db = require("../config/db");
 
-
 exports.addStudent = (req, res) => {
-  const { name, email, phone, department, year, password } = req.body;
 
-  // Step 1: Find a room with available space
-  const roomSql = `SELECT * FROM rooms WHERE occupied < capacity ORDER BY floor_id ASC, room_number ASC LIMIT 1`;
+  const { name, email, phone, department, year, password, room_id } = req.body;
 
-  db.query(roomSql, (err, rooms) => {
+  // Step 1: Check room capacity
+  const checkRoomSql = "SELECT capacity, occupied FROM rooms WHERE room_id = ?";
+
+  db.query(checkRoomSql, [room_id], (err, rooms) => {
+
     if (err) return res.status(500).json(err);
 
     if (rooms.length === 0) {
-      return res.status(400).json({ message: "No available rooms" });
+      return res.status(404).json({ message: "Room not found" });
     }
 
-    const room = rooms[0]; // pick first available room
+    const room = rooms[0];
 
-    // Step 2: Insert student with assigned room
-    const studentSql = `INSERT INTO students (name, email, phone, department, year, room_id, password) VALUES (?,?,?,?,?,?,?)`;
-
-    db.query(studentSql, [name, email, phone, department, year, room.room_id, password], (err2, result) => {
-      if (err2) return res.status(500).json(err2);
-
-      // Step 3: Increment room occupied count
-      const updateRoomSql = `UPDATE rooms SET occupied = occupied + 1 WHERE room_id = ?`;
-      db.query(updateRoomSql, [room.room_id], (err3) => {
-        if (err3) return res.status(500).json(err3);
-
-        res.json({
-          message: "Student added and room assigned successfully",
-          studentId: result.insertId,
-          roomAssigned: room.room_number,
-          floor: room.floor_id
-        });
+    // Step 2: Check if room is full
+    if (room.occupied >= room.capacity) {
+      return res.status(400).json({
+        message: "Room is already full. Please select another room."
       });
-    });
+    }
+
+    // Step 3: Insert student
+    const insertSql = `
+    INSERT INTO students (name,email,phone,department,year,room_id,password)
+    VALUES (?,?,?,?,?,?,?)`;
+
+    db.query(insertSql,
+      [name, email, phone, department, year, room_id, password],
+      (err2, result) => {
+
+        if (err2) return res.status(500).json(err2);
+
+        // Step 4: Increase occupied count
+        const updateRoomSql =
+          "UPDATE rooms SET occupied = occupied + 1 WHERE room_id = ?";
+
+        db.query(updateRoomSql, [room_id], (err3) => {
+
+          if (err3) return res.status(500).json(err3);
+
+          res.json({
+            message: "Student added successfully"
+          });
+
+        });
+
+      });
+
   });
+
 };
 
 // Get all students

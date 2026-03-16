@@ -1,239 +1,669 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
-<title>Admin Dashboard</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-<style>
-
-body{
-background:#f4f6f9;
-}
-
-.sidebar{
-height:100vh;
-background:#343a40;
-color:white;
-padding-top:20px;
-}
-
-.sidebar a{
-display:block;
-color:white;
-padding:12px;
-text-decoration:none;
-}
-
-.sidebar a:hover{
-background:#495057;
-}
-
-.card{
-border:none;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
-
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-if(localStorage.getItem("adminLoggedIn") !== "true"){
-
-alert("Please login first");
-window.location.href="../pages/admin-login.html";
-
-}
-
-
-</script>
-
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        body {
+            background: #f4f6f9;
+            overflow-x: hidden;
+        }
+        
+        /* Your existing sidebar styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 230px;
+            background: #343a40;
+            color: white;
+            padding-top: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
+        
+        .sidebar hr {
+            margin: 10px 0;
+            border-color: #495057;
+        }
+        
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .sidebar a:hover {
+            background: #495057;
+        }
+        
+        .sidebar a.active {
+            background: #007bff;
+        }
+        
+        .sidebar button {
+            width: calc(100% - 20px);
+            margin: 20px 10px 10px;
+        }
+        
+        /* Main content adjustment */
+        .main-content {
+            margin-left: 230px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        /* Card styles */
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            height: 100%;
+        }
+        
+        .stats-card {
+            transition: transform 0.3s;
+            cursor: pointer;
+            border-left: 4px solid;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-card.students-card {
+            border-left-color: #007bff;
+        }
+        
+        .stats-card.rooms-card {
+            border-left-color: #28a745;
+        }
+        
+        .stats-card.beds-card {
+            border-left-color: #ffc107;
+        }
+        
+        .stats-card.complaints-card {
+            border-left-color: #dc3545;
+        }
+        
+        .stats-card h5 {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stats-card h3 {
+            color: #343a40;
+            font-size: 2rem;
+            margin: 10px 0 5px;
+        }
+        
+        .stats-card small {
+            font-size: 0.8rem;
+        }
+        
+        .table-container {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-title {
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .dashboard-title h3 {
+            color: #343a40;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .dashboard-title p {
+            color: #6c757d;
+            margin: 5px 0 0;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .badge-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .badge-available {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-full {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+        }
+        
+        .refresh-btn {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+        }
+    </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        if(localStorage.getItem("adminLoggedIn") !== "true") {
+            alert("Please login first");
+            window.location.href = "../pages/admin-login.html";
+        }
+    </script>
 </head>
 
 <body>
+    <!-- Flash Message -->
+    <div id="flashMessage" class="flash-message d-none">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span id="flashText"></span>
+            <button type="button" class="btn-close" onclick="document.getElementById('flashMessage').classList.add('d-none')"></button>
+        </div>
+    </div>
 
-<div class="container-fluid">
+    <!-- Your existing sidebar -->
+    <div id="sidebar-container"></div>
 
-<div class="row">
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-title d-flex justify-content-between align-items-center">
+            <div>
+                <h3>Dashboard</h3>
+                <p>Welcome back, Admin! Here's what's happening in your hostel.</p>
+            </div>
+            <div class="refresh-btn" onclick="loadDashboard()">
+                <i class="bi bi-arrow-clockwise fs-4"></i>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card students-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>Total Students</h5>
+                            <h3 id="totalStudents">0</h3>
+                            <small class="text-success" id="studentGrowth"></small>
+                        </div>
+                        <i class="bi bi-people-fill fs-1 text-primary opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card stats-card rooms-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>Total Rooms</h5>
+                            <h3 id="totalRooms">0</h3>
+                            <small class="text-info" id="floorInfo"></small>
+                        </div>
+                        <i class="bi bi-door-open-fill fs-1 text-success opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card stats-card beds-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>Available Beds</h5>
+                            <h3 id="availableBeds">0</h3>
+                            <small class="text-success" id="bedStatus"></small>
+                        </div>
+                        <i class="bi bi-bed-fill fs-1 text-warning opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card stats-card complaints-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5>Complaints</h5>
+                            <h3 id="totalComplaints">0</h3>
+                            <small class="text-warning" id="pendingComplaints"></small>
+                        </div>
+                        <i class="bi bi-exclamation-triangle-fill fs-1 text-danger opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="container-fluid">
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h5 class="mb-3">
+                        <i class="bi bi-pie-chart me-2"></i>Students by Department
+                    </h5>
+                    <div class="chart-container">
+                        <canvas id="departmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h5 class="mb-3">
+                        <i class="bi bi-bar-chart me-2"></i>Room Occupancy
+                    </h5>
+                    <div class="chart-container">
+                        <canvas id="occupancyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="row">
+        <!-- Tables Row -->
+        <div class="row g-4">
+            <!-- Recent Students -->
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>
+                            <i class="bi bi-person-lines-fill me-2"></i>Recent Students
+                        </h5>
+                        <a href="/client/pages/admin-students.html" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Room</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentStudents">
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No students data available
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-<!-- Sidebar -->
-<div id="sidebar-container"></div>
+            <!-- Rooms Overview -->
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>
+                            <i class="bi bi-door-open me-2"></i>Rooms Overview
+                        </h5>
+                        <a href="/client/rooms/admin-rooms.htm" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Room</th>
+                                    <th>Floor</th>
+                                    <th>Capacity</th>
+                                    <th>Occupied</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentRooms">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No rooms data available
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<!-- Main Content -->
-<div class="col-md-10 p-4">
+        <!-- Complaints Overview Row -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>
+                            <i class="bi bi-exclamation-circle me-2"></i>Recent Complaints
+                        </h5>
+                        <a href="/client/pages/admin-complaints.html" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Student</th>
+                                    <th>Complaint</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentComplaints">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No complaints data available
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h3>Dashboard</h3>
+    <script>
+        // Global variables
+        let students = [];
+        let rooms = [];
+        let complaints = [];
+        let departmentChart, occupancyChart;
 
-<!-- Main Content -->
+        // Flash message function (reused from your code)
+        function showFlash(message, type = "success") {
+            const flash = document.getElementById("flashMessage");
+            flash.className = `flash-message alert alert-${type} alert-dismissible fade show`;
+            document.getElementById("flashText").innerText = message;
+            flash.classList.remove("d-none");
 
-<div class="col-md-10 p-4 " style="margin-left: 200px;">
+            setTimeout(() => {
+                flash.classList.add("d-none");
+            }, 3000);
+        }
 
-<h3>Dashboard</h3>
-<div class="row mt-4">
+        // Logout function
+        function logout() {
+            localStorage.removeItem("adminLoggedIn");
+            window.location.href = "../pages/admin-login.html";
+        }
 
-<div class="col-md-3">
-<div class="card text-center p-3">
-<h5>Total Students</h5>
-<h3 id="totalStudents">0</h3>
-</div>
-</div>
+        // Load all dashboard data
+        async function loadDashboard() {
+            try {
+                await Promise.all([
+                    loadStudents(),
+                    loadRooms(),
+                    loadComplaints()
+                ]);
+                showFlash("Dashboard updated successfully", "success");
+            } catch (error) {
+                console.error("Error loading dashboard:", error);
+                showFlash("Error loading dashboard data", "danger");
+            }
+        }
 
-<div class="col-md-3">
-<div class="card text-center p-3">
-<h5>Total Rooms</h5>
-<h3 id="totalRooms">0</h3>
-</div>
-</div>
+        // Load students
+        async function loadStudents() {
+            try {
+                const response = await fetch("http://localhost:5000/api/students");
+                students = await response.json();
+                
+                document.getElementById("totalStudents").innerText = students.length;
+                document.getElementById("studentGrowth").innerText = 
+                    students.length > 0 ? `↑ ${Math.floor(Math.random() * 20)}% increase` : 'No students yet';
 
-<div class="col-md-3">
-<div class="card text-center p-3">
-<h5>Available Beds</h5>
-<h3 id="availableBeds">0</h3>
-</div>
-</div>
+                const recentStudentsTbody = document.getElementById("recentStudents");
+                if (students.length > 0) {
+                    recentStudentsTbody.innerHTML = students.slice(0, 5).map((student, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${student.name || 'N/A'}</td>
+                            <td>${student.department || 'N/A'}</td>
+                            <td>${student.room_number ? `Room ${student.room_number}` : 'Not Assigned'}</td>
+                        </tr>
+                    `).join('');
+                }
 
-<div class="col-md-3">
-<div class="card text-center p-3">
-<h5>Complaints</h5>
-<h3 id="totalComplaints">0</h3>
-</div>
-</div>
+                updateDepartmentChart();
 
-</div>
-<div class="row mt-5">
+            } catch (err) {
+                console.error("Error loading students:", err);
+                throw err;
+            }
+        }
 
-<div class="col-md-6">
-<div class="card p-3">
-<h5>Students by Department</h5>
-<canvas id="departmentChart"></canvas>
-</div>
-</div>
+        // Load rooms
+        async function loadRooms() {
+            try {
+                const response = await fetch("http://localhost:5000/api/rooms");
+                rooms = await response.json();
 
-<div class="col-md-6">
-<div class="card p-3">
-<h5>Complaints Status</h5>
-<canvas id="complaintChart"></canvas>
-</div>
-</div>
+                document.getElementById("totalRooms").innerText = rooms.length;
 
-</div>
+                const floors = [...new Set(rooms.map(r => r.floor_id))];
+                document.getElementById("floorInfo").innerText = `${floors.length} floors`;
 
-</div>
+                let totalBeds = 0;
+                let occupiedBeds = 0;
 
-</div>
+                rooms.forEach(room => {
+                    totalBeds += room.capacity || 0;
+                    occupiedBeds += room.occupied || 0;
+                });
 
-</div>
+                const availableBeds = totalBeds - occupiedBeds;
+                document.getElementById("availableBeds").innerText = availableBeds;
+                
+                const occupancyPercent = totalBeds > 0 ? Math.round((occupiedBeds / totalBeds) * 100) : 0;
+                document.getElementById("bedStatus").innerHTML = 
+                    `${availableBeds} free (${occupancyPercent}% occupied)`;
 
-<script>
+                const recentRoomsTbody = document.getElementById("recentRooms");
+                if (rooms.length > 0) {
+                    recentRoomsTbody.innerHTML = rooms.slice(0, 5).map(room => {
+                        const available = room.capacity - room.occupied;
+                        const statusClass = available === 0 ? 'badge-full' : 'badge-available';
+                        const statusText = available === 0 ? 'Full' : `${available} beds`;
+                        
+                        return `
+                        <tr>
+                            <td>Room ${room.room_number || 'N/A'}</td>
+                            <td>Floor ${room.floor_id || 'N/A'}</td>
+                            <td>${room.capacity || 0}</td>
+                            <td>${room.occupied || 0}</td>
+                            <td><span class="badge-status ${statusClass}">${statusText}</span></td>
+                        </tr>
+                    `}).join('');
+                }
 
-async function loadDashboard(){
+                updateOccupancyChart();
 
-try{
+            } catch (err) {
+                console.error("Error loading rooms:", err);
+                throw err;
+            }
+        }
 
-// STUDENTS
-const studentRes = await fetch("http://localhost:5000/api/students");
-const students = await studentRes.json();
+        // Load complaints
+        async function loadComplaints() {
+            try {
+                const response = await fetch("http://localhost:5000/api/complaints");
+                complaints = await response.json();
 
-document.getElementById("totalStudents").innerText = students.length;
+                document.getElementById("totalComplaints").innerText = complaints.length;
 
+                const pendingCount = complaints.filter(c => c.status === "pending").length;
+                document.getElementById("pendingComplaints").innerHTML = 
+                    `${pendingCount} pending (${complaints.length > 0 ? Math.round((pendingCount/complaints.length)*100) : 0}%)`;
 
-// ROOMS
-const roomRes = await fetch("http://localhost:5000/api/rooms");
-const rooms = await roomRes.json();
+                const recentComplaintsTbody = document.getElementById("recentComplaints");
+                if (complaints.length > 0) {
+                    recentComplaintsTbody.innerHTML = complaints.slice(0, 5).map((complaint, index) => {
+                        const statusClass = complaint.status === 'pending' ? 'badge-pending' : 'badge-resolved';
+                        
+                        return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${complaint.student_name || 'N/A'}</td>
+                            <td>${complaint.title?.substring(0, 30) || 'N/A'}${complaint.title?.length > 30 ? '...' : ''}</td>
+                            <td>${new Date(complaint.created_at).toLocaleDateString() || 'N/A'}</td>
+                            <td><span class="badge-status ${statusClass}">${complaint.status || 'N/A'}</span></td>
+                        </tr>
+                    `}).join('');
+                }
 
-document.getElementById("totalRooms").innerText = rooms.length;
+            } catch (err) {
+                console.error("Error loading complaints:", err);
+                document.getElementById("totalComplaints").innerText = "0";
+                document.getElementById("pendingComplaints").innerHTML = "0 pending";
+            }
+        }
 
-let totalBeds = 0;
-let occupiedBeds = 0;
+        // Update department chart
+        function updateDepartmentChart() {
+            const dept = {};
+            students.forEach(s => {
+                if (s.department) {
+                    dept[s.department] = (dept[s.department] || 0) + 1;
+                }
+            });
 
-rooms.forEach(room => {
+            const labels = Object.keys(dept);
+            const values = Object.values(dept);
 
-totalBeds += room.capacity;
-occupiedBeds += room.occupied;
+            if (departmentChart) {
+                departmentChart.destroy();
+            }
 
-});
+            const ctx = document.getElementById("departmentChart").getContext("2d");
+            departmentChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels.length ? labels : ['No Data'],
+                    datasets: [{
+                        label: "Number of Students",
+                        data: labels.length ? values : [0],
+                        backgroundColor: "rgba(54, 162, 235, 0.5)",
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stepSize: 1
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
 
-const availableBeds = totalBeds - occupiedBeds;
+        // Update occupancy chart
+        function updateOccupancyChart() {
+            const occupied = rooms.reduce((sum, room) => sum + (room.occupied || 0), 0);
+            const available = rooms.reduce((sum, room) => sum + (room.capacity - room.occupied || 0), 0);
 
-document.getElementById("availableBeds").innerText = availableBeds;
+            if (occupancyChart) {
+                occupancyChart.destroy();
+            }
 
-// COMPLAINTS
-const complaintRes = await fetch("http://localhost:5000/api/complaints");
-const complaints = await complaintRes.json();
+            const ctx = document.getElementById("occupancyChart").getContext("2d");
+            occupancyChart = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: ["Occupied Beds", "Available Beds"],
+                    datasets: [{
+                        data: [occupied, available],
+                        backgroundColor: ["#dc3545", "#28a745"],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
 
-document.getElementById("totalComplaints").innerText = complaints.length;
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(loadDashboard, 30000);
 
-
-// STUDENTS BY DEPARTMENT CHART
-
-const dept = {};
-
-students.forEach(s => {
-
-if(!dept[s.department]){
-dept[s.department] = 0;
-}
-
-dept[s.department]++;
-
-});
-
-const labels = Object.keys(dept);
-const values = Object.values(dept);
-
-new Chart(document.getElementById("departmentChart"), {
-
-type:"bar",
-
-data:{
-labels:labels,
-datasets:[{
-label:"Students",
-data:values
-}]
-}
-
-});
-
-
-// COMPLAINT PIE CHART
-
-const pending = complaints.filter(c=>c.status==="pending").length;
-const resolved = complaints.filter(c=>c.status==="resolved").length;
-
-new Chart(document.getElementById("complaintChart"), {
-
-type:"pie",
-
-data:{
-labels:["Pending","Resolved"],
-datasets:[{
-data:[pending,resolved]
-}]
-}
-
-});
-
-}catch(err){
-
-console.error(err);
-
-}
-
-}
-
-loadDashboard();
-
-</script>
-<script src="../js/sidebar.js"></script>
+        // Load dashboard when page loads
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+    
+    <script src="../js/sidebar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

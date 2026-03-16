@@ -31,6 +31,30 @@ exports.getRooms = (req, res) => {
   });
 };
 
+// ---------------------- Update Room ----------------------
+
+exports.updateRoom = (req,res)=>{
+
+const id = req.params.id;
+
+const { room_number, capacity, floor_id } = req.body;
+
+const sql = `
+UPDATE rooms
+SET room_number=?, capacity=?, floor_id=?
+WHERE room_id=?
+`;
+
+db.query(sql,[room_number,capacity,floor_id,id],(err,result)=>{
+
+if(err) return res.status(500).json(err);
+
+res.json({message:"Room updated successfully"});
+
+});
+
+};
+
 // ---------------------- Delete Room ----------------------
 exports.deleteRoom = (req, res) => {
   const id = req.params.id;
