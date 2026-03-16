@@ -1,0 +1,49 @@
+<style>
+    .sidebar{
+position: fixed;
+left: 0;
+top: 0;
+height: 100vh;
+width: 230px;
+background:#343a40;
+color:white;
+padding-top:20px;
+overflow-y:auto;
+}
+
+.sidebar a{
+display:block;
+color:white;
+padding:12px;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+background:#495057;
+}
+
+.main-content{
+margin-left:230px;
+padding:20px;
+}
+</style>
+
+<div class="sidebar">
+
+<h4 class="text-center">Hostel Admin</h4>
+<hr>
+
+<a href="/client/pages/admin-dashboard.html">Dashboard</a>
+<a href="/client/pages/admin-students.html">Students</a>
+<a href="/client/rooms/admin-rooms.htm">Rooms</a>
+<a href="/client/pages/admin-fees.html">Fees</a>
+<a href="/client/pages/admin-complaints.html">Complaints</a>
+<a href="/client/pages/admin-attendance.html">Attendance</a>
+
+<button onclick="logout()" class="btn btn-danger w-100 mt-3">
+Logout
+</button>
+
+</div>]
+
+<script src="../js/sidebar.js"></script>

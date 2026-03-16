@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Student Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script>
+
+// protect page
+if(localStorage.getItem("studentLoggedIn") !== "true"){
+
+alert("Please login first");
+
+window.location.href="admin-login.html";
+
+}
+
+function logout(){
+
+localStorage.removeItem("studentLoggedIn");
+
+window.location.href="admin-login.html";
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-primary">
+
+<div class="container-fluid">
+
+<span class="navbar-brand">Student Dashboard</span>
+
+<button class="btn btn-danger" onclick="logout()">Logout</button>
+
+</div>
+
+</nav>
+
+
+<div class="container mt-4">
+
+<h3>Welcome Student</h3>
+
+<div class="row mt-4">
+
+<div class="col-md-4">
+<div class="card p-3 text-center">
+<h5>Room Details</h5>
+<p>View your room information</p>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3 text-center">
+<h5>Complaints</h5>
+<p>Submit hostel complaints</p>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3 text-center">
+<h5>Leave Request</h5>
+<p>Apply for hostel leave</p>
+</div>
+</div>
+
+<div class="col-md-4 mt-3">
+<div class="card p-3 text-center">
+<h5>Fee Status</h5>
+<p>Check fee payment</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
