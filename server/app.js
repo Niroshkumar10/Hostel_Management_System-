@@ -1,11 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 
-require("./config/db");   // IMPORTANT
-
+const connectDB = require("./config/db");
 const studentRoutes = require("./routes/studentRoutes");
-const adminRoutes = require("./routes/adminRoutes");
 const roomRoutes = require("./routes/roomRoutes");
+const complaintRoutes = require("./routes/complaintRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
+const leaveRoutes = require("./routes/leaveRoutes");
+const reportRoutes = require("./routes/reportRoutes");
+const collegeRoutes = require("./routes/collegeRoutes");
 
 
 const app = express();
@@ -13,11 +16,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ CONNECT DB FIRST
+connectDB();
+
+// ✅ ROUTES
 app.use("/api/students", studentRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/rooms", roomRoutes);
+app.use("/api/complaints", complaintRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/leaves", leaveRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/college", collegeRoutes);
+// ✅ ADMIN LOGIN
+app.post("/api/admin/login", (req, res) => {
+  const { username, password } = req.body;
 
-app.use("/api/rooms",roomRoutes);
+  if (username === "admin" && password === "admin123") {
+    return res.json({
+      success: true,
+      message: "Login successful"
+    });
+  } else {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid credentials"
+    });
+  }
+});
 
+// ✅ START SERVER
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });

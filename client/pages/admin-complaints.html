@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Complaints</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 230px;
+            background: #1e293b;
+            color: white;
+            padding-top: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar h4 {
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .sidebar hr {
+            margin: 10px 15px;
+            border-color: #334155;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd5e1;
+            padding: 12px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px 10px;
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #334155;
+            color: white;
+        }
+
+        .sidebar a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .sidebar button {
+            width: calc(100% - 20px);
+            margin: 20px 10px 10px;
+            background: #dc2626;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .sidebar button:hover {
+            background: #b91c1c;
+        }
+
+        /* Main content adjustment */
+        .main-content {
+            margin-left: 230px;
+            min-height: 100vh;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: white;
+            padding: 12px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Form elements */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Table styles - FIXED ALIGNMENT */
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            font-size: 14px;
+            font-weight: 600;
+            background: #1e293b;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Fix for table column widths */
+        .table th:first-child, .table td:first-child {
+            padding-left: 15px;
+        }
+        
+        .table th:last-child, .table td:last-child {
+            padding-right: 15px;
+            text-align: left;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Action buttons - IMPROVED STYLING */
+        .action-btn {
+            padding: 6px 12px;
+            margin: 0 3px;
+            border-radius: 6px;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-toggle {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-toggle:hover {
+            background: #d97706;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2563eb;
+        }
+
+        /* Stats cards */
+        .stats-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        .stats-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 8px 20px;
+            border-radius: 25px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filter-tab:hover {
+            background: #f8fafc;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .filter-tab.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        /* Description preview */
+        .complaint-preview {
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #4b5563;
+        }
+
+        /* Flash Message */
+        #flashMessage {
+            z-index: 9999;
+            min-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .page-item {
+            list-style: none;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+
+        .page-link {
+            color: #2563eb;
+            border-radius: 6px;
+            margin: 0 3px;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #e2e8f0;
+            background: white;
+            cursor: pointer;
+        }
+
+        .page-link:hover {
+            background: #f8fafc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+
+    <script>
+        // Check login
+        if(localStorage.getItem("adminLoggedIn") !== "true") {
+            alert("Please login first");
+            window.location.href = "admin-login.html";
+        }
+
+        function logout() {
+            localStorage.removeItem("adminLoggedIn");
+            window.location.href = "admin-login.html";
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+        <div id="sidebar-container"></div>
+
+    <!-- Flash Message -->
+    <div id="flashMessage" class="alert alert-success d-none position-fixed top-0 end-0 m-4 shadow">
+        <span id="flashText"></span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar d-flex justify-content-between align-items-center">
+            <h5 class="m-0 fw-semibold">
+                <i class="bi bi-exclamation-triangle-fill me-2 text-primary"></i>Complaint Management
+            </h5>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted" id="currentDateTime"></span>
+                <div class="position-relative">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input 
+                        type="text"
+                        id="searchInput"
+                        class="form-control ps-5"
+                        style="width: 300px;"
+                        placeholder="Search complaints..."
+                        onkeyup="searchComplaints()"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <!-- Quick Stats Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Total Complaints</small>
+                            <span class="fs-4 fw-bold" id="totalComplaints">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Pending</small>
+                            <span class="fs-4 fw-bold" id="pendingComplaints">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Resolved</small>
+                            <span class="fs-4 fw-bold" id="resolvedComplaints">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-info bg-opacity-10 text-info">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Students</small>
+                            <span class="fs-4 fw-bold" id="totalStudents">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <span class="filter-tab active" onclick="filterComplaints('all')">All Complaints</span>
+                <span class="filter-tab" onclick="filterComplaints('pending')">Pending</span>
+                <span class="filter-tab" onclick="filterComplaints('resolved')">Resolved</span>
+            </div>
+
+            <!-- Complaints Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-check me-2"></i>Complaints List
+                        </h5>
+                        <span class="badge bg-primary" id="complaintCount">0 records</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%">#</th>
+                                    <th style="width: 20%">Student Name</th>
+                                    <th style="width: 25%">Title</th>
+                                    <th style="width: 15%">Status</th>
+                                    <th style="width: 35%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaintTable">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-5">
+                                        <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                        Loading complaints...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav>
+                        <ul class="pagination" id="pagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Complaint Modal -->
+    <div class="modal fade" id="viewModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-circle me-2 text-primary"></i>Complaint Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td width="100"><strong>Student:</strong></td>
+                            <td><span id="viewStudentName"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Title:</strong></td>
+                            <td><span id="viewTitle"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description:</strong></td>
+                            <td><span id="viewDescription"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Status:</strong></td>
+                            <td><span id="viewStatus"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date:</strong></td>
+                            <td><span id="viewDate"></span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin-complaints.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <script>
+        // Display current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+    </script>
+</body>
+</html>

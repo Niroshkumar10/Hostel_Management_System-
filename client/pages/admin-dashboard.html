@@ -12,55 +12,78 @@
         }
         
         /* Your existing sidebar styles */
-        .sidebar {
+         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
             height: 100vh;
             width: 230px;
-            background: #343a40;
+            background: #1e293b;
             color: white;
             padding-top: 20px;
             overflow-y: auto;
             z-index: 1000;
         }
-        
+
         .sidebar h4 {
+            font-weight: 600;
             text-align: center;
-            margin-bottom: 15px;
-            padding: 0 10px;
+            margin-bottom: 20px;
+            color: white;
         }
-        
+
         .sidebar hr {
-            margin: 10px 0;
-            border-color: #495057;
+            margin: 10px 15px;
+            border-color: #334155;
         }
-        
+
         .sidebar a {
             display: block;
-            color: white;
-            padding: 12px 20px;
+            color: #cbd5e1;
+            padding: 12px 18px;
             text-decoration: none;
-            transition: background 0.3s;
+            border-radius: 6px;
+            margin: 5px 10px;
+            transition: 0.2s;
         }
-        
+
         .sidebar a:hover {
-            background: #495057;
+            background: #334155;
+            color: white;
         }
-        
+
         .sidebar a.active {
-            background: #007bff;
+            background: #2563eb;
+            color: white;
         }
-        
+
         .sidebar button {
             width: calc(100% - 20px);
             margin: 20px 10px 10px;
+            background: #dc2626;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
         }
-        
+
+        .sidebar button:hover {
+            background: #b91c1c;
+        }
+
+          .topbar {
+            background: white;
+            padding: 12px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
         /* Main content adjustment */
         .main-content {
             margin-left: 230px;
-            padding: 20px;
             min-height: 100vh;
         }
         
@@ -225,16 +248,29 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="dashboard-title d-flex justify-content-between align-items-center">
-            <div>
-                <h3>Dashboard</h3>
-                <p>Welcome back, Admin! Here's what's happening in your hostel.</p>
-            </div>
-            <div class="refresh-btn" onclick="loadDashboard()">
-                <i class="bi bi-arrow-clockwise fs-4"></i>
+      
+     
+
+        <div class="topbar d-flex justify-content-between align-items-center">
+            <h5 class="m-0 fw-semibold">
+                  <i class="bi bi-speedometer2 fs-4 me-2 text-primary"></i>Dashboard
+            </h5>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted" id="currentDateTime"></span>
+                <div class="position-relative">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input 
+                        type="text"
+                        id="searchInput"
+                        class="form-control ps-5"
+                        style="width: 300px;"
+                        placeholder="Search complaints..."
+                        onkeyup="searchComplaints()"
+                    >
+                </div>
             </div>
         </div>
-        
+          <div class="p-4">
         <!-- Stats Cards -->
         <div class="row g-4 mb-4">
             <div class="col-md-3">
@@ -417,6 +453,7 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 
     <script>
@@ -471,12 +508,16 @@
 
                 const recentStudentsTbody = document.getElementById("recentStudents");
                 if (students.length > 0) {
-                    recentStudentsTbody.innerHTML = students.slice(0, 5).map((student, index) => `
+                    recentStudentsTbody.innerHTML = students.slice(-5).reverse().map((student, index) => `
                         <tr>
                             <td>${index + 1}</td>
                             <td>${student.name || 'N/A'}</td>
                             <td>${student.department || 'N/A'}</td>
-                            <td>${student.room_number ? `Room ${student.room_number}` : 'Not Assigned'}</td>
+                           <td>
+                            ${student.room_id 
+                                ? `Room ${student.room_id.roomNumber} (Floor ${student.room_id.floor})` 
+                                : 'Not Assigned'}
+                            </td>
                         </tr>
                     `).join('');
                 }
@@ -497,7 +538,7 @@
 
                 document.getElementById("totalRooms").innerText = rooms.length;
 
-                const floors = [...new Set(rooms.map(r => r.floor_id))];
+const floors = [...new Set(rooms.map(r => r.floor))];
                 document.getElementById("floorInfo").innerText = `${floors.length} floors`;
 
                 let totalBeds = 0;
@@ -518,14 +559,15 @@
                 const recentRoomsTbody = document.getElementById("recentRooms");
                 if (rooms.length > 0) {
                     recentRoomsTbody.innerHTML = rooms.slice(0, 5).map(room => {
-                        const available = room.capacity - room.occupied;
+const occupied = room.occupied || 0;
+const available = (room.capacity || 0) - occupied;
                         const statusClass = available === 0 ? 'badge-full' : 'badge-available';
                         const statusText = available === 0 ? 'Full' : `${available} beds`;
                         
                         return `
                         <tr>
-                            <td>Room ${room.room_number || 'N/A'}</td>
-                            <td>Floor ${room.floor_id || 'N/A'}</td>
+                            <td>Room ${room.roomNumber || 'N/A'}</td>
+                            <td>Floor ${room.floor || 'N/A'}</td>
                             <td>${room.capacity || 0}</td>
                             <td>${room.occupied || 0}</td>
                             <td><span class="badge-status ${statusClass}">${statusText}</span></td>
@@ -626,8 +668,10 @@
         // Update occupancy chart
         function updateOccupancyChart() {
             const occupied = rooms.reduce((sum, room) => sum + (room.occupied || 0), 0);
-            const available = rooms.reduce((sum, room) => sum + (room.capacity - room.occupied || 0), 0);
-
+const available = rooms.reduce((sum, room) => {
+  const occupied = room.occupied || 0;
+  return sum + ((room.capacity || 0) - occupied);
+}, 0);
             if (occupancyChart) {
                 occupancyChart.destroy();
             }
@@ -662,7 +706,23 @@
         // Load dashboard when page loads
         document.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
-    
+      <script>
+        // Display current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+    </script> 
     <script src="../js/sidebar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

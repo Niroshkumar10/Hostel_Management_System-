@@ -1,95 +1,83 @@
-async function loadDashboard(){
+async function loadDashboard() {
+  try {
 
-try{
+    // ---------------- STUDENTS ----------------
+    const studentRes = await fetch("http://localhost:5000/api/students");
+    const students = await studentRes.json();
 
-// ---------------- STUDENTS ----------------
-
-const studentRes = await fetch("http://localhost:5000/api/students");
-const students = await studentRes.json();
-
-document.getElementById("totalStudents").innerText = students.length;
+    document.getElementById("totalStudents").innerText = students.length;
 
 
-// ---------------- ROOMS ----------------
+    // ---------------- ROOMS ----------------
+    const roomRes = await fetch("http://localhost:5000/api/rooms");
+    const rooms = await roomRes.json();
 
-const roomRes = await fetch("http://localhost:5000/api/rooms");
-const rooms = await roomRes.json();
+    document.getElementById("totalRooms").innerText = rooms.length;
 
-document.getElementById("totalRooms").innerText = rooms.length;
+    let totalBeds = 0;
+    let occupiedBeds = 0;
 
-let totalBeds = 0;
-let occupiedBeds = 0;
+    rooms.forEach(room => {
+      totalBeds += room.capacity || 0;
+      occupiedBeds += room.occupied || 0;
+    });
 
-rooms.forEach(room => {
-
-totalBeds += room.capacity;
-occupiedBeds += room.occupied;
-
-});
-
-const availableBeds = totalBeds - occupiedBeds;
-
-document.getElementById("availableBeds").innerText = availableBeds;
+    const availableBeds = totalBeds - occupiedBeds;
+    document.getElementById("availableBeds").innerText = availableBeds;
 
 
-// ---------------- RECENT STUDENTS ----------------
+    // ---------------- RECENT STUDENTS ----------------
+    const studentTable = document.getElementById("recentStudents");
 
-const studentTable = document.getElementById("recentStudents");
+    if (studentTable) {
+      studentTable.innerHTML = "";
 
-if(studentTable){
+      students.slice(-5).reverse().forEach((student, index) => {
 
-studentTable.innerHTML = "";
+        let roomText = student.room_id
+          ? `Room ${student.room_id.roomNumber} (Floor ${student.room_id.floor})`
+          : "Not Assigned";
 
-students.slice(-5).reverse().forEach((student,index)=>{
-
-studentTable.innerHTML += `
-<tr>
-<td>${index+1}</td>
-<td>${student.name}</td>
-<td>${student.department}</td>
-<td>${student.room_number ? "Room "+student.room_number : "Not Assigned"}</td>
-</tr>
-`;
-
-});
-
-}
+        studentTable.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${student.name || "N/A"}</td>
+            <td>${student.department || "N/A"}</td>
+            <td>${roomText}</td>
+          </tr>
+        `;
+      });
+    }
 
 
-// ---------------- ROOM OVERVIEW ----------------
+    // ---------------- ROOM OVERVIEW ----------------
+    const roomTable = document.getElementById("recentRooms");
 
-const roomTable = document.getElementById("recentRooms");
+    if (roomTable) {
+      roomTable.innerHTML = "";
 
-if(roomTable){
+      rooms.slice(0, 5).forEach(room => {
 
-roomTable.innerHTML = "";
+        const occupied = room.occupied || 0;
+        const available = (room.capacity || 0) - occupied;
 
-rooms.slice(0,5).forEach(room=>{
+        let status = available === 0
+          ? `<span class="text-danger fw-bold">Full</span>`
+          : `<span class="text-success">${available} Beds</span>`;
 
-let available = room.capacity - room.occupied;
+        roomTable.innerHTML += `
+          <tr>
+            <td>Room ${room.roomNumber}</td>
+            <td>Floor ${room.floor}</td>
+            <td>${status}</td>
+          </tr>
+        `;
+      });
+    }
 
-let status = available === 0
-? `<span style="color:red;font-weight:bold">Full</span>`
-: `<span style="color:green">${available} Beds</span>`;
-
-roomTable.innerHTML += `
-<tr>
-<td>${room.room_number}</td>
-<td>${room.floor_id}</td>
-<td>${status}</td>
-</tr>
-`;
-
-});
-
-}
-
-}catch(err){
-
-console.error("Dashboard Load Error:",err);
-
-}
-
+  } catch (err) {
+    console.error("Dashboard Load Error:", err);
+  }
 }
 
 loadDashboard();

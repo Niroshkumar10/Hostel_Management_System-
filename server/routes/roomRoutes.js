@@ -1,13 +1,25 @@
 const express = require("express");
-
 const router = express.Router();
 
-const roomController = require("../controllers/roomController");
+const {
+  addRoom,
+  getRooms,
+  updateRoom,
+  deleteRoom
+} = require("../controllers/roomController");
 
-router.post("/add",roomController.addRoom);
 
-router.get("/",roomController.getRooms);
-router.put("/update/:id", roomController.updateRoom);
-router.delete("/delete/:id",roomController.deleteRoom);
+// ➕ ADD ROOM
+router.post("/", addRoom);
+
+// 📥 GET ALL ROOMS
+router.get("/", getRooms);
+
+// ✏️ UPDATE ROOM
+router.put("/:id", updateRoom);
+
+// ❌ DELETE ROOM
+router.delete("/:id", deleteRoom);
+
 
 module.exports = router;

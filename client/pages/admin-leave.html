@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Leave Requests</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 230px;
+            background: #1e293b;
+            color: white;
+            padding-top: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar h4 {
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .sidebar hr {
+            margin: 10px 15px;
+            border-color: #334155;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd5e1;
+            padding: 12px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px 10px;
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #334155;
+            color: white;
+        }
+
+        .sidebar a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .sidebar button {
+            width: calc(100% - 20px);
+            margin: 20px 10px 10px;
+            background: #dc2626;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .sidebar button:hover {
+            background: #b91c1c;
+        }
+
+        /* Main content adjustment */
+        .main-content {
+            margin-left: 230px;
+            min-height: 100vh;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: white;
+            padding: 12px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Form elements */
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: #2563eb;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-success {
+            background: #059669;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-outline-primary, .btn-outline-danger {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* Table styles */
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            font-size: 14px;
+            font-weight: 600;
+            background: #1e293b;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Stats cards */
+        .stats-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+        }
+
+        .stats-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .stats-info h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stats-info p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Filter section */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 8px 20px;
+            border-radius: 25px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filter-tab:hover {
+            background: #f8fafc;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .filter-tab.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* Student avatar */
+        .student-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Reason preview */
+        .reason-preview {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #4b5563;
+        }
+
+        /* Action buttons */
+        .action-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        /* Flash Message */
+        #flashMessage {
+            z-index: 9999;
+            min-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .page-item {
+            list-style: none;
+        }
+
+        .page-item.active .page-link {
+            background-color: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+
+        .page-link {
+            color: #2563eb;
+            border-radius: 6px;
+            margin: 0 3px;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #e2e8f0;
+            background: white;
+            cursor: pointer;
+        }
+
+        .page-link:hover {
+            background: #f8fafc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .date-filter {
+                flex-direction: column;
+            }
+            .action-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        // Check login
+        if(localStorage.getItem("adminLoggedIn") !== "true") {
+            alert("Please login first");
+            window.location.href = "admin-login.html";
+        }
+
+        function logout() {
+            localStorage.removeItem("adminLoggedIn");
+            window.location.href = "admin-login.html";
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+           <div id="sidebar-container"></div>
+
+
+    <!-- Flash Message -->
+    <div id="flashMessage" class="alert alert-success d-none position-fixed top-0 end-0 m-4 shadow">
+        <span id="flashText"></span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar d-flex justify-content-between align-items-center">
+            <h5 class="m-0 fw-semibold">
+                <i class="bi bi-calendar-plus-fill me-2 text-primary"></i>Leave Request Management
+            </h5>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted" id="currentDateTime"></span>
+                <div class="position-relative">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input 
+                        type="text"
+                        id="searchInput"
+                        class="form-control ps-5"
+                        style="width: 250px;"
+                        placeholder="Search by student or reason..."
+                        onkeyup="searchLeaves()"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <!-- Quick Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-calendar-plus"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h3 id="totalLeaves">0</h3>
+                            <p>Total Requests</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h3 id="pendingLeaves">0</h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h3 id="approvedLeaves">0</h3>
+                            <p>Approved</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-danger bg-opacity-10 text-danger">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h3 id="rejectedLeaves">0</h3>
+                            <p>Rejected</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-tabs">
+                    <span class="filter-tab active" onclick="filterLeaves('all')">All Requests</span>
+                    <span class="filter-tab" onclick="filterLeaves('pending')">Pending</span>
+                    <span class="filter-tab" onclick="filterLeaves('approved')">Approved</span>
+                    <span class="filter-tab" onclick="filterLeaves('rejected')">Rejected</span>
+                </div>
+
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="mb-2"><i class="bi bi-calendar-range me-2"></i>Date Range Filter</h6>
+                        <div class="date-filter">
+                            <div style="flex: 1;">
+                                <label class="form-label">From Date</label>
+                                <input type="date" id="filterFrom" class="form-control">
+                            </div>
+                            <div style="flex: 1;">
+                                <label class="form-label">To Date</label>
+                                <input type="date" id="filterTo" class="form-control">
+                            </div>
+                            <button class="btn btn-primary" onclick="filterByDate()">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="clearFilter()">
+                                <i class="bi bi-x"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <span class="badge bg-primary" id="leaveCount">0 records</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leave Requests Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%">#</th>
+                                    <th style="width: 20%">Student</th>
+                                    <th style="width: 12%">From Date</th>
+                                    <th style="width: 12%">To Date</th>
+                                    <th style="width: 20%">Reason</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 21%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaveTable">
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-5">
+                                        <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                        Loading leave requests...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav>
+                        <ul class="pagination" id="pagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Leave Modal -->
+    <div class="modal fade" id="viewModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-calendar-check me-2 text-primary"></i>Leave Request Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td width="100"><strong>Student:</strong></td>
+                            <td><span id="viewStudentName"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>From Date:</strong></td>
+                            <td><span id="viewFromDate"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>To Date:</strong></td>
+                            <td><span id="viewToDate"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duration:</strong></td>
+                            <td><span id="viewDuration"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reason:</strong></td>
+                            <td><span id="viewReason"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Status:</strong></td>
+                            <td><span id="viewStatus"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Applied On:</strong></td>
+                            <td><span id="viewAppliedOn"></span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Reason Modal -->
+    <div class="modal fade" id="rejectModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Reject Leave Request
+                    </h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="rejectLeaveId">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        <input type="text" id="rejectStudentName" class="form-control" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Leave Period</label>
+                        <input type="text" id="rejectLeavePeriod" class="form-control" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Rejection <span class="text-danger">*</span></label>
+                        <textarea id="rejectReason" class="form-control" rows="3" 
+                            placeholder="Please provide a reason for rejection..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x me-2"></i>Cancel
+                    </button>
+                    <button class="btn btn-danger" onclick="confirmReject()">
+                        <i class="bi bi-x-circle me-2"></i>Reject Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin-leave.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <script>
+        // Display current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+    </script>
+</body>
+</html>

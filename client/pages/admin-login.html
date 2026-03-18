@@ -8,8 +8,8 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,10 +17,13 @@
     <style>
         * {
             font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f1f5f9;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -31,86 +34,133 @@
         
         .login-wrapper {
             width: 100%;
-            max-width: 1000px;
-            background: rgba(255, 255, 255, 0.95);
+            max-width: 1100px;
+            background: white;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
         }
         
+        /* Left Panel - Matching sidebar theme */
         .login-left {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px;
+            background: #1e293b;
+            padding: 50px 40px;
             color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
             height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.2) 100%);
+            pointer-events: none;
         }
         
         .login-left h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            color: white;
+            position: relative;
+        }
+        
+        .login-left h1 span {
+            color: #60a5fa;
         }
         
         .login-left p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1rem;
+            color: #cbd5e1;
             line-height: 1.6;
+            margin-bottom: 30px;
+            position: relative;
         }
         
         .features {
-            margin-top: 30px;
+            margin-top: 20px;
+            position: relative;
         }
         
         .feature-item {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+            border-color: #60a5fa;
         }
         
         .feature-item i {
             width: 40px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.2);
+            background: #2563eb;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 15px;
             font-size: 1.2rem;
+            color: white;
         }
         
+        .feature-item span {
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        /* Right Panel */
         .login-right {
-            padding: 50px 40px;
+            padding: 60px 50px;
             background: white;
         }
         
         .brand {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         
         .brand i {
-            font-size: 3rem;
-            color: #667eea;
+            font-size: 3.5rem;
+            color: #2563eb;
             margin-bottom: 15px;
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 20px;
+            display: inline-block;
         }
         
         .brand h2 {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #333;
+            color: #1e293b;
             margin-bottom: 5px;
         }
         
         .brand p {
-            color: #666;
+            color: #64748b;
             font-size: 0.95rem;
         }
         
+        /* Toggle Buttons */
         .toggle-buttons {
             display: flex;
             gap: 10px;
@@ -118,6 +168,7 @@
             padding: 5px;
             background: #f1f5f9;
             border-radius: 12px;
+            border: 1px solid #e2e8f0;
         }
         
         .toggle-btn {
@@ -126,17 +177,26 @@
             border: none;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
             background: transparent;
             color: #64748b;
         }
         
+        .toggle-btn i {
+            margin-right: 8px;
+        }
+        
         .toggle-btn.active {
             background: white;
-            color: #667eea;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+            color: #2563eb;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .toggle-btn.student.active {
+            color: #059669;
         }
         
         .login-form {
@@ -151,7 +211,15 @@
             font-weight: 500;
             color: #334155;
             margin-bottom: 8px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-label i {
+            margin-right: 8px;
+            color: #2563eb;
+            font-size: 1rem;
         }
         
         .input-group {
@@ -159,28 +227,37 @@
             overflow: hidden;
             border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
+            background: white;
         }
         
         .input-group:focus-within {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
         
         .input-group-text {
             background: #f8fafc;
             border: none;
             color: #64748b;
+            padding: 0 15px;
         }
         
         .form-control {
             border: none;
-            padding: 12px;
+            padding: 12px 15px;
             font-size: 0.95rem;
+            background: transparent;
         }
         
         .form-control:focus {
             box-shadow: none;
             background: transparent;
+            outline: none;
+        }
+        
+        .form-control::placeholder {
+            color: #94a3b8;
+            font-size: 0.9rem;
         }
         
         .login-btn {
@@ -200,18 +277,25 @@
         }
         
         .login-btn.admin {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e293b;
             color: white;
+        }
+        
+        .login-btn.admin:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
         }
         
         .login-btn.student {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: #059669;
             color: white;
         }
         
-        .login-btn:hover {
+        .login-btn.student:hover {
+            background: #047857;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
         }
         
         .forgot-password {
@@ -222,12 +306,55 @@
         .forgot-password a {
             color: #64748b;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: color 0.3s ease;
         }
         
         .forgot-password a:hover {
-            color: #667eea;
+            color: #2563eb;
+        }
+        
+        /* Flash Message */
+        #flashMessage {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            z-index: 9999;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #059669;
+        }
+        
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+        
+        /* Loading spinner */
+        .spinner-border {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
         }
         
         @media (max-width: 768px) {
@@ -238,40 +365,54 @@
             .login-right {
                 padding: 40px 20px;
             }
+            
+            .login-wrapper {
+                max-width: 450px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Flash Message -->
+    <div id="flashMessage" class="alert d-none" role="alert">
+        <span id="flashText"></span>
+    </div>
+
     <div class="login-wrapper">
         <div class="row g-0">
             <!-- Left Column - Welcome Message -->
             <div class="col-md-6">
                 <div class="login-left">
-                    <h1>Welcome Back!</h1>
-                    <p>Access the Hostel Management System to manage student accommodations, room allocations, and facility maintenance efficiently.</p>
+                    <h1>Welcome to <span>Hostel Admin</span></h1>
+                    <p>Complete hostel management solution for administrators and students</p>
                     
                     <div class="features">
                         <div class="feature-item">
-                            <i class="fas fa-bed"></i>
-                            <span>Room Allocation Management</span>
+                            <i class="bi bi-building"></i>
+                            <span>Room Allocation & Management</span>
                         </div>
                         <div class="feature-item">
-                            <i class="fas fa-credit-card"></i>
+                            <i class="bi bi-people"></i>
+                            <span>Student Records & Attendance</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-credit-card"></i>
                             <span>Fee Collection & Tracking</span>
                         </div>
                         <div class="feature-item">
-                            <i class="fas fa-clipboard-list"></i>
-                            <span>Maintenance Requests</span>
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span>Complaint Management System</span>
                         </div>
                         <div class="feature-item">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Real-time Analytics</span>
+                            <i class="bi bi-bar-chart"></i>
+                            <span>Real-time Analytics Dashboard</span>
                         </div>
                     </div>
                     
-                    <div style="margin-top: 40px;">
-                        <p style="font-size: 0.9rem; opacity: 0.7;">
-                            <i class="fas fa-shield-alt"></i> Secure access for administrators and students
+                    <div style="margin-top: 30px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0;">
+                            <i class="bi bi-shield-check me-2"></i>
+                            Secure access with role-based authentication
                         </p>
                     </div>
                 </div>
@@ -281,67 +422,72 @@
             <div class="col-md-6">
                 <div class="login-right">
                     <div class="brand">
-                        <i class="fas fa-building"></i>
+                        <i class="bi bi-building"></i>
                         <h2>Hostel Management</h2>
-                        <p>Login to access your dashboard</p>
+                        <p>Sign in to continue to your dashboard</p>
                     </div>
                     
                     <!-- Toggle Buttons -->
                     <div class="toggle-buttons">
                         <button class="toggle-btn active" id="adminToggle" onclick="showAdmin()">
-                            <i class="fas fa-user-tie me-2"></i>Admin
+                            <i class="bi bi-person-badge"></i>Admin Login
                         </button>
                         <button class="toggle-btn" id="studentToggle" onclick="showStudent()">
-                            <i class="fas fa-user-graduate me-2"></i>Student
+                            <i class="bi bi-person"></i>Student Login
                         </button>
                     </div>
                     
                     <!-- Admin Login Form -->
                     <form id="adminForm" class="login-form">
+                      <!-- In the admin form section, change the label -->
+<div class="form-group">
+    <label class="form-label">
+        <i class="bi bi-person"></i>Username
+    </label>
+    <div class="input-group">
+        <span class="input-group-text">
+            <i class="bi bi-person"></i>
+        </span>
+        <input 
+            type="text" 
+            class="form-control" 
+            id="adminEmail" 
+            placeholder="Enter username"
+            value="admin"
+            required
+        >
+    </div>
+</div>
                         <div class="form-group">
                             <label class="form-label">
-                                <i class="fas fa-envelope me-2"></i>Admin Email
+                                <i class="bi bi-lock"></i>Password
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text">
-                                    <i class="fas fa-envelope"></i>
-                                </span>
-                                <input 
-                                    type="email" 
-                                    class="form-control" 
-                                    id="adminEmail" 
-                                    placeholder="Enter admin email"
-                                    required
-                                >
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="fas fa-lock me-2"></i>Password
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-lock"></i>
+                                    <i class="bi bi-lock"></i>
                                 </span>
                                 <input 
                                     type="password" 
                                     class="form-control" 
                                     id="adminPassword" 
                                     placeholder="Enter password"
+                                    value="admin123"
                                     required
                                 >
+                                <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('adminPassword')">
+                                    <i class="bi bi-eye"></i>
+                                </span>
                             </div>
                         </div>
                         
-                        <button type="submit" class="login-btn admin">
-                            <i class="fas fa-sign-in-alt"></i>
+                        <button type="submit" class="login-btn admin" id="adminLoginBtn">
+                            <i class="bi bi-box-arrow-in-right"></i>
                             Login as Admin
                         </button>
                         
                         <div class="forgot-password">
                             <a href="#">
-                                <i class="fas fa-question-circle me-1"></i>
+                                <i class="bi bi-question-circle"></i>
                                 Forgot Password?
                             </a>
                         </div>
@@ -351,17 +497,18 @@
                     <form id="studentForm" class="login-form" style="display: none;">
                         <div class="form-group">
                             <label class="form-label">
-                                <i class="fas fa-envelope me-2"></i>Student Email
+                                <i class="bi bi-envelope"></i>Email Address
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text">
-                                    <i class="fas fa-envelope"></i>
+                                    <i class="bi bi-envelope"></i>
                                 </span>
                                 <input 
                                     type="email" 
                                     class="form-control" 
                                     id="studentEmail" 
-                                    placeholder="Enter student email"
+                                    placeholder="student@example.com"
+                                    value="student@hostel.com"
                                     required
                                 >
                             </div>
@@ -369,47 +516,42 @@
                         
                         <div class="form-group">
                             <label class="form-label">
-                                <i class="fas fa-lock me-2"></i>Password
+                                <i class="bi bi-lock"></i>Password
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text">
-                                    <i class="fas fa-lock"></i>
+                                    <i class="bi bi-lock"></i>
                                 </span>
                                 <input 
                                     type="password" 
                                     class="form-control" 
                                     id="studentPassword" 
                                     placeholder="Enter password"
+                                    value="student123"
                                     required
                                 >
+                                <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('studentPassword')">
+                                    <i class="bi bi-eye"></i>
+                                </span>
                             </div>
                         </div>
                         
-                        <div class="form-group mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="rememberMe">
-                                <label class="form-check-label" for="rememberMe">
-                                    Remember me
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="login-btn student">
-                            <i class="fas fa-sign-in-alt"></i>
+                        <button type="submit" class="login-btn student" id="studentLoginBtn">
+                            <i class="bi bi-box-arrow-in-right"></i>
                             Login as Student
                         </button>
                         
                         <div class="forgot-password">
                             <a href="#">
-                                <i class="fas fa-question-circle me-1"></i>
+                                <i class="bi bi-question-circle"></i>
                                 Forgot Password?
                             </a>
                         </div>
                         
-                        <div class="text-center mt-3">
+                        <div class="text-center mt-4">
                             <p style="color: #64748b; font-size: 0.9rem;">
-                                Don't have an account? 
-                                <a href="#" style="color: #667eea; text-decoration: none;">Contact Admin</a>
+                                New student? 
+                                <a href="#" style="color: #2563eb; text-decoration: none; font-weight: 500;">Register here</a>
                             </p>
                         </div>
                     </form>
@@ -418,59 +560,43 @@
         </div>
     </div>
 
-    <!-- <script>
-        function showAdmin() {
-            // Show admin form
-            document.getElementById('adminForm').style.display = 'block';
-            document.getElementById('studentForm').style.display = 'none';
+    <!-- Custom flash message function (matches your existing showFlash) -->
+    <script>
+        function showFlash(message, type = 'success') {
+            const flash = document.getElementById('flashMessage');
+            const flashText = document.getElementById('flashText');
             
-            // Update toggle buttons
-            document.getElementById('adminToggle').classList.add('active');
-            document.getElementById('studentToggle').classList.remove('active');
+            flash.className = `alert alert-${type} d-block position-fixed top-0 end-0 m-4 shadow`;
+            flashText.textContent = message;
+            
+            setTimeout(() => {
+                flash.classList.add('d-none');
+            }, 3000);
         }
-        
-        function showStudent() {
-            // Show student form
-            document.getElementById('adminForm').style.display = 'none';
-            document.getElementById('studentForm').style.display = 'block';
-            
-            // Update toggle buttons
-            document.getElementById('adminToggle').classList.remove('active');
-            document.getElementById('studentToggle').classList.add('active');
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
         }
-        
-        // Form submission handlers (prevent default for demo)
-        document.getElementById('adminForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
-            
-            if (email && password) {
-                alert('Admin login successful! Redirecting to dashboard...');
-                // Add your login logic here
-            } else {
-                alert('Please fill in all fields');
+
+        // Check if already logged in
+        function checkExistingSession() {
+            if (localStorage.getItem('adminLoggedIn') === 'true') {
+                window.location.href = 'admin-dashboard.html';
+            } else if (localStorage.getItem('studentLoggedIn') === 'true') {
+                window.location.href = 'student-dashboard.html';
             }
-        });
-        
-        document.getElementById('studentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('studentEmail').value;
-            const password = document.getElementById('studentPassword').value;
-            
-            if (email && password) {
-                alert('Student login successful! Redirecting to dashboard...');
-                // Add your login logic here
-            } else {
-                alert('Please fill in all fields');
-            }
-        });
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', checkExistingSession);
     </script>
-     -->
-   
-   <script src="../js/admin-login.js"></script>
-   
-     <!-- Bootstrap JS Bundle -->
+
+    <!-- Your existing admin-login.js -->
+    <script src="../js/admin-login.js"></script>
+    
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

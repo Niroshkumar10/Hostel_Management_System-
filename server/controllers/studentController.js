@@ -1,126 +1,172 @@
+const { getDB } = require("../config/db");
+const { ObjectId } = require("mongodb");
 
-// Add student with automatic room assignment
-const db = require("../config/db");
+const Student = require("../models/studentModel");
+const Room = require("../models/Room");
 
-exports.addStudent = (req, res) => {
+// ADD STUDENT
+exports.addStudent = async (req, res) => {
+  try {
+    const { name, registerNumber, email, phone, department, year, dob, room_id } = req.body;
 
-  const { name, email, phone, department, year, password, room_id } = req.body;
-
-  // Step 1: Check room capacity
-  const checkRoomSql = "SELECT capacity, occupied FROM rooms WHERE room_id = ?";
-
-  db.query(checkRoomSql, [room_id], (err, rooms) => {
-
-    if (err) return res.status(500).json(err);
-
-    if (rooms.length === 0) {
-      return res.status(404).json({ message: "Room not found" });
+    // check duplicate
+    const existing = await Student.findOne({ registerNumber });
+    if (existing) {
+      return res.status(400).json({ message: "Register number exists" });
     }
 
-    const room = rooms[0];
+    let assignedRoom = null;
 
-    // Step 2: Check if room is full
-    if (room.occupied >= room.capacity) {
-      return res.status(400).json({
-        message: "Room is already full. Please select another room."
-      });
+    // ROOM ASSIGN
+    if (room_id) {
+      const room = await Room.findById(room_id);
+
+      if (!room) return res.status(404).json({ message: "Room not found" });
+
+      if (room.occupied >= room.capacity) {
+        return res.status(400).json({ message: "Room full" });
+      }
+
+      room.occupied += 1;
+      await room.save();
+
+      assignedRoom = room._id;
     }
 
-    // Step 3: Insert student
-    const insertSql = `
-    INSERT INTO students (name,email,phone,department,year,room_id,password)
-    VALUES (?,?,?,?,?,?,?)`;
+    const student = new Student({
+      name,
+      registerNumber,
+      email,
+      phone,
+      department,
+      year,
+      dob,
+      room_id: assignedRoom
+    });
 
-    db.query(insertSql,
-      [name, email, phone, department, year, room_id, password],
-      (err2, result) => {
+    await student.save();
 
-        if (err2) return res.status(500).json(err2);
+    res.json({ message: "Student added successfully" });
 
-        // Step 4: Increase occupied count
-        const updateRoomSql =
-          "UPDATE rooms SET occupied = occupied + 1 WHERE room_id = ?";
-
-        db.query(updateRoomSql, [room_id], (err3) => {
-
-          if (err3) return res.status(500).json(err3);
-
-          res.json({
-            message: "Student added successfully"
-          });
-
-        });
-
-      });
-
-  });
-
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-// Get all students
-exports.getStudents = (req, res) => {
-  const sql = `
-    SELECT s.*, r.room_number, r.floor_id
-    FROM students s
-    LEFT JOIN rooms r ON s.room_id = r.room_id
-    ORDER BY s.student_id ASC
-  `;
+// ✅ GET ALL STUDENTS
+// exports.getStudents = async (req, res) => {
+//   try {
+//     const db = getDB();
 
-  db.query(sql, (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json(result);
-  });
+//     const students = await db.collection("students")
+//       .find()
+//       .sort({ createdAt: -1 })
+//       .toArray();
+
+//     res.json(students);
+
+//   } catch (err) {
+//     res.status(500).json({ message: "Error fetching students" });
+//   }
+// };
+exports.getStudents = async (req, res) => {
+  const students = await Student.find().populate("room_id");
+  res.json(students);
 };
 
-// Delete student and update room occupancy
-exports.deleteStudent = (req, res) => {
-  const id = req.params.id;
 
-  // Step 1: Get student to know their room_id
-  const getStudentSql = "SELECT room_id FROM students WHERE student_id = ?";
-  db.query(getStudentSql, [id], (err, students) => {
-    if(err) return res.status(500).json(err);
+// ✅ GET SINGLE STUDENT
+exports.getStudentById = async (req, res) => {
+  try {
+    const db = getDB();
+    const { id } = req.params;
 
-    if(students.length === 0){
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+
+    const student = await db.collection("students")
+      .findOne({ _id: new ObjectId(id) });
+
+    if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    const roomId = students[0].room_id;
+    res.json(student);
 
-    // Step 2: Delete the student
-    const deleteSql = "DELETE FROM students WHERE student_id = ?";
-    db.query(deleteSql, [id], (err2) => {
-      if(err2) return res.status(500).json(err2);
-
-      // Step 3: Decrease the room's occupied count
-      if(roomId){
-        const updateRoomSql = "UPDATE rooms SET occupied = occupied - 1 WHERE room_id = ?";
-        db.query(updateRoomSql, [roomId], (err3) => {
-          if(err3) return res.status(500).json(err3);
-
-          res.json({ message: "Student deleted and room freed successfully" });
-        });
-      } else {
-        res.json({ message: "Student deleted successfully" });
-      }
-    });
-  });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching student" });
+  }
 };
 
-// Student login
-exports.loginStudent = (req, res) => {
-  const { email, password } = req.body;
-  const sql = "SELECT * FROM students WHERE email = ?";
 
-  db.query(sql, [email], (err, result) => {
-    if (err) return res.status(500).json(err);
-    if (result.length === 0)
-      return res.json({ success: false, message: "Student not found" });
 
-    const student = result[0];
-    if (student.password !== password)
-      return res.json({ success: false, message: "Incorrect password" });
+// ✅ UPDATE STUDENT
+exports.updateStudent = async (req, res) => {
+  try {
+    const { room_id } = req.body;
 
-    res.json({ success: true, message: "Login successful", student });
-  });
+    const student = await Student.findById(req.params.id);
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    const oldRoomId = student.room_id?.toString();
+    const newRoomId = room_id;
+
+    // ROOM CHANGE
+    if (oldRoomId !== newRoomId) {
+
+      // REMOVE FROM OLD ROOM
+      if (oldRoomId) {
+        await Room.findByIdAndUpdate(oldRoomId, {
+          $inc: { occupied: -1 }
+        });
+      }
+
+      // ADD TO NEW ROOM
+      if (newRoomId) {
+        const newRoom = await Room.findById(newRoomId);
+
+        if (!newRoom) return res.status(404).json({ message: "Room not found" });
+
+        if (newRoom.occupied >= newRoom.capacity) {
+          return res.status(400).json({ message: "Room full" });
+        }
+
+        await Room.findByIdAndUpdate(newRoomId, {
+          $inc: { occupied: 1 }
+        });
+      }
+    }
+
+    await Student.findByIdAndUpdate(req.params.id, req.body);
+
+    res.json({ message: "Student updated successfully" });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+// ✅ DELETE STUDENT
+exports.deleteStudent = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id);
+
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    // reduce room count
+    if (student.room_id) {
+      await Room.findByIdAndUpdate(student.room_id, {
+        $inc: { occupied: -1 }
+      });
+    }
+
+    await Student.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "Student deleted successfully" });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
