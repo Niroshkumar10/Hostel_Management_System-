@@ -4,6 +4,35 @@ const { ObjectId } = require("mongodb");
 const Student = require("../models/studentModel");
 const Room = require("../models/Room");
 
+
+// ✅ STUDENT LOGIN (NEW)
+// ✅ STUDENT LOGIN (Email + Register Number)
+exports.loginStudent = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const student = await Student.findOne({
+      email: username,
+      registerNumber: password
+    }).populate("room_id");
+    if (!student) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or register number"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      student
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // ADD STUDENT
 exports.addStudent = async (req, res) => {
   try {
@@ -53,27 +82,24 @@ exports.addStudent = async (req, res) => {
   }
 };
 
-// ✅ GET ALL STUDENTS
-// exports.getStudents = async (req, res) => {
-//   try {
-//     const db = getDB();
 
-//     const students = await db.collection("students")
-//       .find()
-//       .sort({ createdAt: -1 })
-//       .toArray();
-
-//     res.json(students);
-
-//   } catch (err) {
-//     res.status(500).json({ message: "Error fetching students" });
-//   }
-// };
 exports.getStudents = async (req, res) => {
   const students = await Student.find().populate("room_id");
   res.json(students);
 };
 
+exports.getRoommates = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+
+    const roommates = await Student.find({ room_id: roomId });
+
+    res.json(roommates);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // ✅ GET SINGLE STUDENT
 exports.getStudentById = async (req, res) => {

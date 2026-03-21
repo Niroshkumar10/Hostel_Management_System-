@@ -43,7 +43,7 @@ function logout() {
     localStorage.removeItem("adminUser");
     
     // Redirect to login
-    window.location.href = "/client/pages/admin-login.html";
+    window.location.href = "/client/pages/admin/admin-login.html";
 }
 
 // Load sidebar when DOM is ready

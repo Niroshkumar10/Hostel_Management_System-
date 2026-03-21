@@ -1,22 +1,4 @@
-// // Only for structure reference (no mongoose)
 
-// const studentSchema = {
-//   name: "String",
-//   registerNumber: "String (UNIQUE)",
-//   email: "String",
-//   phone: "String",
-
-//   department: "String",
-//   year: "Number",
-//   dob: "Date",
-
-//   room_id: "ObjectId (optional)",
-
-//   createdAt: "Date",
-//   updatedAt: "Date"
-// };
-
-// module.exports = studentSchema;
 
 const mongoose = require("mongoose");
 

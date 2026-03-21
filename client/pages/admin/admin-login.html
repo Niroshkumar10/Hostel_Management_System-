@@ -494,67 +494,67 @@
                     </form>
                     
                     <!-- Student Login Form -->
-                    <form id="studentForm" class="login-form" style="display: none;">
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="bi bi-envelope"></i>Email Address
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-envelope"></i>
-                                </span>
-                                <input 
-                                    type="email" 
-                                    class="form-control" 
-                                    id="studentEmail" 
-                                    placeholder="student@example.com"
-                                    value="student@hostel.com"
-                                    required
-                                >
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="bi bi-lock"></i>Password
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-lock"></i>
-                                </span>
-                                <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="studentPassword" 
-                                    placeholder="Enter password"
-                                    value="student123"
-                                    required
-                                >
-                                <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('studentPassword')">
-                                    <i class="bi bi-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="login-btn student" id="studentLoginBtn">
-                            <i class="bi bi-box-arrow-in-right"></i>
-                            Login as Student
-                        </button>
-                        
-                        <div class="forgot-password">
-                            <a href="#">
-                                <i class="bi bi-question-circle"></i>
-                                Forgot Password?
-                            </a>
-                        </div>
-                        
-                        <div class="text-center mt-4">
-                            <p style="color: #64748b; font-size: 0.9rem;">
-                                New student? 
-                                <a href="#" style="color: #2563eb; text-decoration: none; font-weight: 500;">Register here</a>
-                            </p>
-                        </div>
-                    </form>
+                   <!-- Student Login Form -->
+<form id="studentForm" class="login-form" style="display: none;">
+    
+    <div class="form-group">
+        <label class="form-label">
+            <i class="bi bi-person"></i>Email
+        </label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi bi-person"></i>
+            </span>
+            <input 
+                type="text" 
+                class="form-control" 
+                id="studentEmail" 
+                placeholder="Enter Register Number (e.g. 2021001)"
+                required
+            >
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label">
+            <i class="bi bi-lock"></i>Password (Same as Register Number)
+        </label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi bi-lock"></i>
+            </span>
+            <input 
+                type="password" 
+                class="form-control" 
+                id="studentPassword" 
+                placeholder="Enter Register Number"
+                required
+            >
+            <span class="input-group-text" style="cursor: pointer;" onclick="togglePassword('studentPassword')">
+                <i class="bi bi-eye"></i>
+            </span>
+        </div>
+    </div>
+    
+    <button type="submit" class="login-btn student" id="studentLoginBtn">
+        <i class="bi bi-box-arrow-in-right"></i>
+        Login as Student
+    </button>
+    
+    <div class="forgot-password">
+        <a href="#">
+            <i class="bi bi-question-circle"></i>
+            Forgot Password?
+        </a>
+    </div>
+
+    <div class="text-center mt-4">
+        <p style="color: #64748b; font-size: 0.9rem;">
+            Use your Register Number as both username and password
+        </p>
+    </div>
+
+</form>
                 </div>
             </div>
         </div>
@@ -583,9 +583,9 @@
         // Check if already logged in
         function checkExistingSession() {
             if (localStorage.getItem('adminLoggedIn') === 'true') {
-                window.location.href = 'admin-dashboard.html';
+                window.location.href = '/client/pages/admin/admin-dashboard.html';
             } else if (localStorage.getItem('studentLoggedIn') === 'true') {
-                window.location.href = 'student-dashboard.html';
+                window.location.href = '/client/pages/student/student-dashboard.html';
             }
         }
 
@@ -594,7 +594,7 @@
     </script>
 
     <!-- Your existing admin-login.js -->
-    <script src="../js/admin-login.js"></script>
+    <script src="/client/js/adminJs/admin-login.js"></script>
     
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -57,40 +57,23 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
-// exports.loginAdmin = async (req, res) => {
-//   const { username, password } = req.body;
-
-//   try {
-//     const db = getDB();
-
-//     const admin = await db.collection("admins").findOne({ username });
-
-//     if (!admin) {
-//       return res.status(401).json({
-//         success: false,
-//         message: "Admin not found"
-//       });
-//     }
-
-//     if (admin.password !== password) {
-//       return res.status(401).json({
-//         success: false,
-//         message: "Invalid password"
-//       });
-//     }
-
-//     res.json({
-//       success: true,
-//       message: "Login successful",
-//       admin: {
-//         username: admin.username,
-//         name: admin.name,
-//         role: admin.role
-//       }
-//     });
-
-//   } catch (err) {
-//     console.error("Admin login error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+// Create default admin (run once)
+exports.createDefaultAdmin = async () => {
+  const db = getDB();
+  try {
+    const existingAdmin = await db.collection("admins").findOne({ username: "admin" });
+    if (!existingAdmin) {
+      await db.collection("admins").insertOne({
+        username: "admin",
+        password: "admin123",
+        name: "Administrator",
+        email: "admin@hostel.com",
+        role: "super_admin",
+        createdAt: new Date()
+      });
+      console.log("Default admin created");
+    }
+  } catch (err) {
+    console.error("Error creating default admin:", err);
+  }
+};

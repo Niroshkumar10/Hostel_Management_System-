@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student - Profile</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar styles matching admin */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 230px;
+            background: #1e293b;
+            color: white;
+            padding-top: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar h4 {
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .sidebar hr {
+            margin: 10px 15px;
+            border-color: #334155;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd5e1;
+            padding: 12px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px 10px;
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #334155;
+            color: white;
+        }
+
+        .sidebar a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .sidebar button {
+            width: calc(100% - 20px);
+            margin: 20px 10px 10px;
+            background: #dc2626;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .sidebar button:hover {
+            background: #b91c1c;
+        }
+
+        /* Main content adjustment */
+        .main-content {
+            margin-left: 230px;
+            min-height: 100vh;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: white;
+            padding: 12px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Stats cards matching admin */
+        .stats-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .stats-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Profile Header Card */
+        .profile-header-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 12px;
+            padding: 25px 30px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .profile-header-content {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: #2563eb;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .profile-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 25px;
+            margin-left: auto;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .stat-item .label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .dashboard-card h6 {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card h3 {
+            color: #1e293b;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-title h5 {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title h5 i {
+            color: #2563eb;
+        }
+
+        .badge-count {
+            background: #e8f0fe;
+            color: #2563eb;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-item .label {
+            color: #64748b;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .info-item .value {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8fafc;
+            padding: 12px 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table td {
+            padding: 12px 15px;
+            font-size: 0.85rem;
+            color: #1e293b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-custom {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary-custom:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-outline-custom {
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline-custom:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        /* Flash Message */
+        #flashMessage {
+            z-index: 9999;
+            min-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .profile-stats {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-stats {
+                flex-wrap: wrap;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <script>
+        if(localStorage.getItem("studentLoggedIn") !== "true") {
+            window.location.href = "/client/pages/admin/admin-login.html";
+        }
+
+        function logout() {
+            localStorage.removeItem("studentLoggedIn");
+            localStorage.removeItem("student");
+            window.location.href = "/client/pages/admin/admin-login.html";
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Flash Message -->
+    <div id="flashMessage" class="alert alert-success d-none position-fixed top-0 end-0 m-4 shadow">
+        <span id="flashText"></span>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <div class="topbar d-flex justify-content-between align-items-center">
+            <h5 class="m-0 fw-semibold">
+                <i class="bi bi-person-circle me-2 text-primary"></i>My Profile
+            </h5>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted" id="currentDateTime"></span>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <!-- Profile Header -->
+            <div class="profile-header-card">
+                <div class="profile-header-content">
+                    <div class="profile-avatar" id="avatarLetter">S</div>
+                    <div class="profile-info">
+                        <h2 id="studentName">Student Name</h2>
+                        <div class="badge-container">
+                            <span class="profile-badge">
+                                <i class="bi bi-envelope"></i>
+                                <span id="studentEmail">email@example.com</span>
+                            </span>
+                            <span class="profile-badge">
+                                <i class="bi bi-telephone"></i>
+                                <span id="studentPhone">Not provided</span>
+                            </span>
+                            <span class="profile-badge">
+                                <i class="bi bi-qr-code"></i>
+                                <span id="studentReg">REG-001</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="value" id="statAttendance">0%</div>
+                            <div class="label">Attendance</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="value" id="statComplaints">0</div>
+                            <div class="label">Complaints</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="value" id="statLeaves">0</div>
+                            <div class="label">Leaves</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Info Cards -->
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h6>Room Details</h6>
+                    <h3 id="roomNumber">-</h3>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="text-muted small">Floor <span id="roomFloor">-</span></span>
+                        <span class="status-badge status-active" id="roomStatus">Active</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <h6>Department & Year</h6>
+                    <h3 id="deptName">-</h3>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="text-muted small" id="yearName">-</span>
+                        <span class="status-badge status-approved">Current</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="section-card">
+                <div class="section-title">
+                    <h5>
+                        <i class="bi bi-person-badge"></i>
+                        Personal Information
+                    </h5>
+                    <span class="badge-count">Primary</span>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">Date of Birth</div>
+                        <div class="value" id="studentDob">Not provided</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Gender</div>
+                        <div class="value" id="studentGender">Not specified</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Address</div>
+                        <div class="value" id="studentAddress">Not provided</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Member Since</div>
+                        <div class="value" id="memberSince">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Leave Applications -->
+            <div class="section-card">
+                <div class="section-title">
+                    <h5>
+                        <i class="bi bi-calendar-check"></i>
+                        Recent Leave Applications
+                    </h5>
+                    <span class="badge-count" id="leaveCount">0</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Duration</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                                    No leave applications found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Complaints -->
+            <div class="section-card">
+                <div class="section-title">
+                    <h5>
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Recent Complaints
+                    </h5>
+                    <span class="badge-count" id="complaintCount">0</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaintTableBody">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                                    No complaints found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <!-- <button class="btn-primary-custom" onclick="enableEdit()">
+                    <i class="bi bi-pencil-square"></i>
+                    Edit Profile
+                </button> -->
+                <!-- <button class="btn-outline-custom" onclick="changePassword()">
+                    <i class="bi bi-key"></i>
+                    Change Password
+                </button> -->
+                <button class="btn-outline-custom" onclick="window.location.href='/client/pages/student/student-leave.html'">
+                    <i class="bi bi-calendar-plus"></i>
+                    Apply Leave
+                </button>
+                <button class="btn-outline-custom" onclick="window.location.href='/client/pages/student/student-complaints.html'">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    New Complaint
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/client/js/student/loadSidebar.js"></script>
+    <script src="/client/js/student/student-profile.js"></script>
+    
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSidebar('profile');
+        });
+    </script>
+</body>
+</html>

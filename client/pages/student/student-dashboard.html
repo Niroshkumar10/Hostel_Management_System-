@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f1f5f9;
+            overflow-x: hidden;
+        }
+         .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 230px;
+            background: #1e293b;
+            color: white;
+            padding-top: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar h4 {
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .sidebar hr {
+            margin: 10px 15px;
+            border-color: #334155;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd5e1;
+            padding: 12px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px 10px;
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #334155;
+            color: white;
+        }
+
+        .sidebar a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .sidebar button {
+            width: calc(100% - 20px);
+            margin: 20px 10px 10px;
+            background: #dc2626;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .sidebar button:hover {
+            background: #b91c1c;
+        }
+
+
+        /* Main content adjustment - matches sidebar width */
+        .main-content {
+            margin-left: 240px;
+            min-height: 100vh;
+            padding: 15px 20px;
+            /* transition: all 0.3s; */
+        }
+
+        /* 🔹 Topbar - Compact */
+        .topbar {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+        }
+
+        .topbar h5 {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .topbar h5 i {
+            color: #2563eb;
+            font-size: 1.2rem;
+        }
+
+        .topbar h5 span {
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        .date-time {
+            background: #f8fafc;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: #64748b;
+            font-size: 0.8rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-time i {
+            color: #2563eb;
+            font-size: 0.9rem;
+        }
+
+        /* 🔹 Stats Cards - COMPACT */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+            border-color: #2563eb;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: #e8f0fe;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon i {
+            font-size: 1.3rem;
+            color: #2563eb;
+        }
+
+        .stat-info h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .stat-info p {
+            color: #64748b;
+            margin: 0;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* 🔹 Quick Actions - COMPACT */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .action-btn:hover i,
+        .action-btn:hover span {
+            color: white;
+        }
+
+        .action-btn i {
+            font-size: 1.2rem;
+            color: #2563eb;
+            margin-bottom: 4px;
+            display: block;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn span {
+            color: #1e293b;
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        /* 🔹 Info Cards - COMPACT */
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 18px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-card h5 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1.5px solid #e2e8f0;
+        }
+
+        .info-card h5 i {
+            color: #2563eb;
+            font-size: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .badge-room {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .badge-year {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        /* 🔹 Feature Cards Grid - COMPACT */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .card-box {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 12px;
+            text-align: center;
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .card-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #60a5fa);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .card-box:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-icon {
+            width: 45px;
+            height: 45px;
+            background: #e8f0fe;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            transition: all 0.2s ease;
+        }
+
+        .card-box:hover .card-icon {
+            background: #2563eb;
+        }
+
+        .card-box:hover .card-icon i {
+            color: white;
+        }
+
+        .card-icon i {
+            font-size: 1.4rem;
+            color: #2563eb;
+            transition: all 0.2s ease;
+        }
+
+        .card-box h5 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .card-box p {
+            color: #64748b;
+            font-size: 0.75rem;
+            margin: 0 0 8px 0;
+        }
+
+        .card-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #2563eb;
+            padding: 3px 8px;
+            background: #e8f0fe;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        /* Flash Message */
+        #flashMessage {
+            z-index: 9999;
+            min-width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            animation: slideIn 0.3s ease;
+            font-size: 0.85rem;
+            padding: 12px 15px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        // 🔒 Protect Page - Check student login
+        if(localStorage.getItem("studentLoggedIn") !== "true"){
+            alert("Please login first");
+            window.location.href = "/client/pages/admin/admin-login.html";
+        }
+
+        // 🚪 Logout function
+        function logout(){
+            localStorage.removeItem("studentLoggedIn");
+            localStorage.removeItem("student");
+            window.location.href = "/client/pages/admin/admin-login.html";
+        }
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').innerHTML = 
+                `<i class="bi bi-calendar3 me-1"></i>${now.toLocaleDateString('en-US', options)}`;
+        }
+
+        // Show flash message
+        function showFlash(message, type = 'success') {
+            const flashDiv = document.getElementById('flashMessage');
+            const flashText = document.getElementById('flashText');
+            
+            let icon = 'bi-check-circle-fill';
+            if(type === 'danger') icon = 'bi-exclamation-triangle-fill';
+            if(type === 'warning') icon = 'bi-exclamation-circle-fill';
+            
+            flashDiv.innerHTML = `<i class="bi ${icon} me-2"></i><span id="flashText">${message}</span>`;
+            flashDiv.className = `alert alert-${type} position-fixed top-0 end-0 m-4 shadow-lg`;
+            flashDiv.classList.remove('d-none');
+            
+            setTimeout(() => {
+                flashDiv.classList.add('d-none');
+            }, 3000);
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Flash Message -->
+    <div id="flashMessage" class="alert d-none position-fixed top-0 end-0 m-4" role="alert">
+        <span id="flashText"></span>
+    </div>
+
+    <!-- Sidebar Container - Component will be loaded here -->
+    <div id="sidebar-container"></div>
+
+    <!-- 🔹 MAIN CONTENT -->
+     <div class="">
+        
+     </div>
+    <div class="main-content">
+        <!-- 🔹 TOPBAR - Compact -->
+        <div class="topbar">
+            <h5>
+                <i class="bi bi-person-circle"></i>
+                Welcome, <span id="studentName">Student</span>
+            </h5>
+            <div class="date-time" id="currentDateTime">
+                <i class="bi bi-calendar3"></i>
+                Loading...
+            </div>
+        </div>
+        
+
+        <!-- 🔹 STATS CARDS - Compact -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="roomNumber">-</h3>
+                    <p>Room No.</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="deptName">-</h3>
+                    <p>Department</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="yearName">-</h3>
+                    <p>Year</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-envelope"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="studentEmail">-</h3>
+                    <p>Email</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔹 QUICK ACTIONS - Compact -->
+        <!-- <div class="quick-actions">
+            <div class="action-btn" onclick="window.location.href='attendance.html'">
+                <i class="bi bi-calendar-check"></i>
+                <span>Attendance</span>
+            </div>
+            <div class="action-btn" onclick="window.location.href='complaints.html'">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>Complaint</span>
+            </div>
+            <div class="action-btn" onclick="window.location.href='leave.html'">
+                <i class="bi bi-calendar-plus"></i>
+                <span>Leave</span>
+            </div>
+            
+        </div> -->
+
+        <!-- 🔹 DETAILED INFO SECTION - Compact -->
+        <div class="info-section">
+            <!-- Personal Information -->
+            <div class="info-card">
+                <h5>
+                    <i class="bi bi-person-badge"></i>
+                    Personal Info
+                </h5>
+                <div class="info-item">
+                    <span class="info-label">Full Name</span>
+                    <span class="info-value" id="fullName">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Register No.</span>
+                    <span class="info-value" id="registerNumber">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value" id="studentPhone">-</span>
+                </div>
+            </div>
+
+            <!-- Room & Academic Details -->
+            <div class="info-card">
+                <h5>
+                    <i class="bi bi-door-open"></i>
+                    Room & Academics
+                </h5>
+                <div class="info-item">
+                    <span class="info-label">Room</span>
+                    <span class="info-value badge-room" id="roomDetail">Not Assigned</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Floor</span>
+                    <span class="info-value" id="roomFloor">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Year</span>
+                    <span class="info-value badge-year" id="yearDetail">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔹 FEATURE CARDS GRID - Compact -->
+        <div class="cards-grid">
+            <div class="card-box" onclick="window.location.href='/client/pages/student/student-complaints.html'">
+                <div class="card-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5>Complaints</h5>
+                <p>Track issues</p>
+                <div class="card-value" id="complaintCount">0</div>
+            </div>
+
+            <div class="card-box" onclick="window.location.href='/client/pages/student/student-leave.html'">
+                <div class="card-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <h5>Leave</h5>
+                <p>Apply now</p>
+                <div class="card-value" id="leaveStatus">Available</div>
+            </div>
+
+
+            <div class="card-box" onclick="window.location.href='/client/pages/student/student-attendance.html'">
+                <div class="card-icon">
+                    <i class="bi bi-calendar-week"></i>
+                </div>
+                <h5>Attendance</h5>
+                <p>View record</p>
+                <div class="card-value" id="attendancePercent">0%</div>
+            </div>
+
+            <div class="card-box" onclick="window.location.href='/client/pages/student/student-room.html'">
+                <div class="card-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+                <h5>My Room</h5>
+                <p>Details</p>
+                <div class="card-value" id="roomStatus">-</div>
+            </div>
+
+            <div class="card-box" onclick="window.location.href='/client/pages/student/student-profile.html'">
+                <div class="card-icon">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <h5>Profile</h5>
+                <p>View info</p>
+                <div class="card-value">→</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/client/js/student/loadSidebar.js"></script>
+    <script src="/client/js/student/student-dashboard.js"></script>
+    
+    <script>
+        // Initialize date and time
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setInterval(updateDateTime, 60000); // Update every minute
+            // Load sidebar with active page
+            loadSidebar('dashboard');
+        });
+    </script>
+</body>
+</html>

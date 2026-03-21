@@ -36,16 +36,6 @@ const year = parseInt(document.getElementById("year").value);
     return;
   }
 
-  // const student = {
-  //   name: name,
-  //   registerNumber: registerNumber,
-  //   email: email,
-  //   phone: phone || "",
-  //   department: department,
-  //   year: parseInt(year),
-  //   dob: dob,
-  //   // room_id: room_id || null,
-  // };
   const student = {
   name: document.getElementById("name").value,
   registerNumber: document.getElementById("registerNumber").value,

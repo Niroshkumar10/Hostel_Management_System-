@@ -17,6 +17,36 @@ function showStudent(){
   document.getElementById("adminToggle").classList.remove("active");
 }
 
+// ADMIN REGISTER FROM  
+document.getElementById("adminRegisterForm")?.addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const admin = {
+    name: document.getElementById("adminName").value,
+    username: document.getElementById("adminUsername").value,
+    email: document.getElementById("adminEmail").value,
+    password: document.getElementById("adminPassword").value
+  };
+
+  try {
+    const res = await fetch("http://localhost:5000/api/admin/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(admin)
+    });
+
+    const data = await res.json();
+
+    showFlash(data.message || "Admin created", "success");
+
+  } catch (err) {
+    showFlash("Error creating admin", "danger");
+  }
+});
+
+
 // ADMIN LOGIN
 const adminForm = document.getElementById("adminForm");
 
@@ -60,39 +90,41 @@ adminForm.addEventListener("submit", async function(e){
 document.getElementById('studentForm').addEventListener('submit', async function(e){
   e.preventDefault();
 
-  const email = document.getElementById('studentEmail').value;
+  const username = document.getElementById('studentEmail').value;
   const password = document.getElementById('studentPassword').value;
 
-  console.log("Attempting student login with:", { email }); // Debug log
+  console.log("Attempting student login with:", { username, password });
 
   try {
-    const response = await fetch("http://localhost:5000/api/students/login", { // Fixed endpoint
+    const response = await fetch("http://localhost:5000/api/students/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ username, password })
     });
 
     const data = await response.json();
-    console.log("Server response:", data); // Debug log
 
     if (data.success) {
       localStorage.setItem("studentLoggedIn", "true");
       localStorage.setItem("student", JSON.stringify(data.student));
+
       showFlash("Login successful! Redirecting...", "success");
+
       setTimeout(() => {
-        window.location.href = "student-dashboard.html";
+        window.location.href = "/client/pages/student/student-dashboard.html";
       }, 1000);
+
     } else {
       showFlash(data.message || "Invalid login", "danger");
     }
+
   } catch (err) {
     console.error("Login error:", err);
     showFlash("Server error - please try again", "danger");
   }
 });
-
 // Toggle password visibility
 function togglePassword(inputId) {
   const input = document.getElementById(inputId);

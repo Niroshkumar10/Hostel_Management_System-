@@ -10,6 +10,8 @@ const leaveRoutes = require("./routes/leaveRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const collegeRoutes = require("./routes/collegeRoutes");
 
+const adminRoutes = require("./routes/adminRoutes");
+
 
 const app = express();
 
@@ -28,21 +30,8 @@ app.use("/api/leaves", leaveRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/college", collegeRoutes);
 // ✅ ADMIN LOGIN
-app.post("/api/admin/login", (req, res) => {
-  const { username, password } = req.body;
 
-  if (username === "admin" && password === "admin123") {
-    return res.json({
-      success: true,
-      message: "Login successful"
-    });
-  } else {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid credentials"
-    });
-  }
-});
+app.use("/api/admin", adminRoutes);
 
 // ✅ START SERVER
 app.listen(5000, () => {

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management System - Documentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1e293b;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2563eb;
+            margin-top: 25px;
+        }
+        h4 {
+            color: #475569;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th {
+            background: #1e293b;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tr:hover {
+            background: #f8fafc;
+        }
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .note {
+            background: #e8f0fe;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .success {
+            background: #d1fae5;
+            border-left: 4px solid #16a34a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        @media print {
+            body {
+                font-size: 11pt;
+            }
+            pre {
+                white-space: pre-wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Hostel Management System - Complete Documentation</h1>
+    
+    <div class="note">
+        <strong>Version:</strong> 1.0 | <strong>Last Updated:</strong> March 19, 2026
+    </div>
+
+    <h2>Table of Contents</h2>
+    <ol>
+        <li><a href="#overview">Project Overview</a></li>
+        <li><a href="#architecture">System Architecture</a></li>
+        <li><a href="#tech-stack">Technology Stack</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#user-roles">User Roles</a></li>
+        <li><a href="#modules">Module Documentation</a></li>
+        <li><a href="#database">Database Schema</a></li>
+        <li><a href="#api">API Documentation</a></li>
+        <li><a href="#ui-design">UI/UX Design</a></li>
+        <li><a href="#installation">Installation Guide</a></li>
+        <li><a href="#deployment">Deployment Guide</a></li>
+        <li><a href="#user-guide">User Guide</a></li>
+        <li><a href="#testing">Testing</a></li>
+        <li><a href="#enhancements">Future Enhancements</a></li>
+    </ol>
+
+    <h2 id="overview">1. Project Overview</h2>
+    
+    <h3>1.1 Introduction</h3>
+    <p>The Hostel Management System is a comprehensive web-based application designed to streamline and automate the daily operations of hostel management. The system provides separate interfaces for administrators and students, enabling efficient management of rooms, attendance, complaints, leave requests, and fee payments.</p>
+
+    <h3>1.2 Objectives</h3>
+    <ul>
+        <li>Digitize hostel management processes</li>
+        <li>Provide real-time tracking of student activities</li>
+        <li>Enable seamless communication between students and administration</li>
+        <li>Reduce manual paperwork and improve efficiency</li>
+        <li>Generate insightful reports for decision making</li>
+    </ul>
+
+    <h3>1.3 Scope</h3>
+    <p>The system covers:</p>
+    <ul>
+        <li>Student registration and profile management</li>
+        <li>Room allocation and tracking</li>
+        <li>Attendance monitoring</li>
+        <li>Complaint registration and resolution</li>
+        <li>Leave application and approval</li>
+        <li>Fee management and tracking</li>
+        <li>Report generation</li>
+        <li>Admin dashboard for overall control</li>
+    </ul>
+
+    <h2 id="architecture">2. System Architecture</h2>
+    
+    <h3>2.1 Architecture Diagram</h3>
+    <pre>
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Frontend      │────▶│   Backend API   │────▶│   Database      │
+│   (Browser)     │     │   (Node.js)     │     │   (MongoDB)     │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+         │                       │                        │
+         │                       │                        │
+         ▼                       ▼                        ▼
+    HTML/CSS/JS            Express Server            Data Storage
+    Bootstrap              REST APIs                  Collections
+    </pre>
+
+    <h3>2.2 System Flow</h3>
+    <pre>
+Student Login ──▶ Dashboard ──┬──▶ View Profile
+                              ├──▶ Apply Leave
+                              ├──▶ Raise Complaint
+                              ├──▶ Check Attendance
+                              └──▶ View Room Details
+
+Admin Login ──▶ Dashboard ──┬──▶ Manage Students
+                            ├──▶ Manage Rooms
+                            ├──▶ Manage Complaints
+                            ├──▶ Manage Leaves
+                            ├──▶ View Reports
+                            └──▶ System Settings
+    </pre>
+
+    <h2 id="tech-stack">3. Technology Stack</h2>
+
+    <h3>3.1 Frontend</h3>
+    <table>
+        <tr><th>Technology</th><th>Purpose</th></tr>
+        <tr><td>HTML5</td><td>Structure</td></tr>
+        <tr><td>CSS3</td><td>Styling</td></tr>
+        <tr><td>JavaScript</td><td>Client-side logic</td></tr>
+        <tr><td>Bootstrap 5</td><td>UI framework</td></tr>
+        <tr><td>Bootstrap Icons</td><td>Icon library</td></tr>
+        <tr><td>Google Fonts (Inter)</td><td>Typography</td></tr>
+    </table>
+
+    <h3>3.2 Backend</h3>
+    <table>
+        <tr><th>Technology</th><th>Purpose</th></tr>
+        <tr><td>Node.js</td><td>Runtime environment</td></tr>
+        <tr><td>Express.js</td><td>Web framework</td></tr>
+        <tr><td>MongoDB</td><td>Database</td></tr>
+        <tr><td>Mongoose</td><td>ODM library</td></tr>
+    </table>
+
+    <h2 id="features">4. Features</h2>
+
+    <h3>4.1 Admin Features</h3>
+    <ul>
+        <li><strong>Dashboard</strong>: Overview of hostel statistics</li>
+        <li><strong>Student Management</strong>: Add, edit, delete students</li>
+        <li><strong>Room Management</strong>: Allocate rooms, track occupancy</li>
+        <li><strong>Complaint Management</strong>: View and resolve complaints</li>
+        <li><strong>Leave Management</strong>: Approve/reject leave requests</li>
+        <li><strong>Attendance Management</strong>: Track student attendance</li>
+        <li><strong>Reports</strong>: Generate various reports</li>
+        <li><strong>Settings</strong>: Configure system settings</li>
+    </ul>
+
+    <h3>4.2 Student Features</h3>
+    <ul>
+        <li><strong>Dashboard</strong>: Personal overview</li>
+        <li><strong>Profile</strong>: View and edit personal information</li>
+        <li><strong>Room Details</strong>: View room and roommate information</li>
+        <li><strong>Complaints</strong>: Raise and track complaints</li>
+        <li><strong>Leave</strong>: Apply for leave and check status</li>
+        <li><strong>Attendance</strong>: View attendance records</li>
+        <li><strong>Fees</strong>: Check fee status</li>
+    </ul>
+
+    <h2 id="user-roles">5. User Roles</h2>
+
+    <h3>5.1 Admin</h3>
+    <ul>
+        <li><strong>Username</strong>: admin</li>
+        <li><strong>Password</strong>: admin123</li>
+        <li>Full access to all modules</li>
+        <li>Can manage all records</li>
+        <li>Generates reports</li>
+    </ul>
+
+    <h3>5.2 Student</h3>
+    <ul>
+        <li><strong>Email</strong>: student@hostel.com</li>
+        <li><strong>Password</strong>: student123</li>
+        <li>Limited access to own records</li>
+        <li>Can raise complaints</li>
+        <li>Can apply for leave</li>
+        <li>View own attendance</li>
+    </ul>
+
+    <h2 id="database">6. Database Schema</h2>
+
+    <h3>6.1 Students Collection</h3>
+    <pre>
+{
+  _id: ObjectId,
+  name: String,
+  registerNumber: String,
+  email: String,
+  phone: String,
+  department: String,
+  year: Number,
+  dob: Date,
+  gender: String,
+  address: String,
+  room_id: { type: ObjectId, ref: "Room" },
+  createdAt: Date,
+  updatedAt: Date
+}
+    </pre>
+
+    <h3>6.2 Rooms Collection</h3>
+    <pre>
+{
+  _id: ObjectId,
+  roomNumber: String,
+  floor: Number,
+  capacity: Number,
+  occupied: Number,
+  createdAt: Date,
+  updatedAt: Date
+}
+    </pre>
+
+    <h3>6.3 Complaints Collection</h3>
+    <pre>
+{
+  _id: ObjectId,
+  student_id: { type: ObjectId, ref: "Student" },
+  student_name: String,
+  title: String,
+  description: String,
+  status: { type: String, enum: ["pending", "resolved", "rejected"] },
+  createdAt: Date,
+  updatedAt: Date
+}
+    </pre>
+
+    <h2 id="api">7. API Documentation</h2>
+
+    <h3>7.1 Student APIs</h3>
+    <table>
+        <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+        <tr><td>/api/students</td><td>GET</td><td>Get all students</td></tr>
+        <tr><td>/api/students/:id</td><td>GET</td><td>Get student by ID</td></tr>
+        <tr><td>/api/students</td><td>POST</td><td>Create new student</td></tr>
+        <tr><td>/api/students/:id</td><td>PUT</td><td>Update student</td></tr>
+        <tr><td>/api/students/:id</td><td>DELETE</td><td>Delete student</td></tr>
+    </table>
+
+    <h3>7.2 Room APIs</h3>
+    <table>
+        <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+        <tr><td>/api/rooms</td><td>GET</td><td>Get all rooms</td></tr>
+        <tr><td>/api/rooms/:id</td><td>GET</td><td>Get room by ID</td></tr>
+        <tr><td>/api/rooms</td><td>POST</td><td>Create new room</td></tr>
+        <tr><td>/api/rooms/:id</td><td>PUT</td><td>Update room</td></tr>
+        <tr><td>/api/rooms/:id</td><td>DELETE</td><td>Delete room</td></tr>
+    </table>
+
+    <h2 id="installation">8. Installation Guide</h2>
+
+    <h3>8.1 Prerequisites</h3>
+    <ul>
+        <li>Node.js (v14 or higher)</li>
+        <li>MongoDB (v4 or higher)</li>
+        <li>npm (v6 or higher)</li>
+        <li>Git</li>
+    </ul>
+
+    <h3>8.2 Backend Setup</h3>
+    <pre>
+# Clone the repository
+git clone https://github.com/yourusername/hostel-management.git
+
+# Navigate to backend directory
+cd hostel-management/backend
+
+# Install dependencies
+npm install
+
+# Create .env file
+touch .env
+
+# Add environment variables
+echo "PORT=5000" >> .env
+echo "MONGODB_URI=mongodb://localhost:27017/hostel_db" >> .env
+echo "JWT_SECRET=your_secret_key" >> .env
+
+# Start the server
+npm start
+    </pre>
+
+    <h3>8.3 Frontend Setup</h3>
+    <pre>
+# Navigate to frontend directory
+cd ../client
+
+# No build step needed - static files
+# Serve using any static server
+npx serve .
+    </pre>
+
+    <h2 id="ui-design">9. UI/UX Design</h2>
+
+    <h3>9.1 Color Scheme</h3>
+    <table>
+        <tr><th>Color</th><th>Usage</th><th>Hex Code</th></tr>
+        <tr><td>Primary Blue</td><td>Buttons, links, icons</td><td>#2563eb</td></tr>
+        <tr><td>Dark Blue</td><td>Sidebar background</td><td>#1e293b</td></tr>
+        <tr><td>Success Green</td><td>Approved status</td><td>#16a34a</td></tr>
+        <tr><td>Warning Yellow</td><td>Pending status</td><td>#92400e</td></tr>
+        <tr><td>Error Red</td><td>Rejected status</td><td>#dc2626</td></tr>
+        <tr><td>Light Gray</td><td>Background</td><td>#f1f5f9</td></tr>
+        <tr><td>Border Gray</td><td>Borders</td><td>#e2e8f0</td></tr>
+    </table>
+
+    <h3>9.2 Typography</h3>
+    <ul>
+        <li><strong>Primary Font</strong>: Inter, Segoe UI, sans-serif</li>
+        <li><strong>Headings</strong>: 600 weight</li>
+        <li><strong>Body Text</strong>: 400 weight</li>
+        <li><strong>Labels</strong>: 500 weight, uppercase</li>
+    </ul>
+
+    <h2 id="testing">10. Testing</h2>
+
+    <h3>10.1 Admin Module Test Cases</h3>
+    <table>
+        <tr><th>Test Case</th><th>Expected Result</th><th>Status</th></tr>
+        <tr><td>Admin login with correct credentials</td><td>Successful login</td><td>✅</td></tr>
+        <tr><td>Admin login with incorrect credentials</td><td>Error message</td><td>✅</td></tr>
+        <tr><td>Add new student</td><td>Student added to list</td><td>✅</td></tr>
+        <tr><td>Edit student details</td><td>Student updated</td><td>✅</td></tr>
+        <tr><td>Delete student</td><td>Student removed</td><td>✅</td></tr>
+    </table>
+
+    <h3>10.2 Student Module Test Cases</h3>
+    <table>
+        <tr><th>Test Case</th><th>Expected Result</th><th>Status</th></tr>
+        <tr><td>Student login with correct credentials</td><td>Successful login</td><td>✅</td></tr>
+        <tr><td>Student login with incorrect credentials</td><td>Error message</td><td>✅</td></tr>
+        <tr><td>View profile</td><td>Profile displayed correctly</td><td>✅</td></tr>
+        <tr><td>Submit complaint</td><td>Complaint added</td><td>✅</td></tr>
+        <tr><td>Apply for leave</td><td>Leave request submitted</td><td>✅</td></tr>
+    </table>
+
+    <h2 id="enhancements">11. Future Enhancements</h2>
+
+    <h3>11.1 Short-term Enhancements</h3>
+    <ul>
+        <li>✅ Email notifications for leave approval/rejection</li>
+        <li>✅ SMS alerts for important updates</li>
+        <li>✅ Payment gateway integration</li>
+        <li>✅ Photo upload for student profiles</li>
+        <li>✅ Multiple file upload for complaints</li>
+    </ul>
+
+    <h3>11.2 Long-term Enhancements</h3>
+    <ul>
+        <li>⬜ Mobile app (React Native/Flutter)</li>
+        <li>⬜ Biometric attendance system</li>
+        <li>⬜ AI-powered complaint categorization</li>
+        <li>⬜ Predictive analytics for occupancy</li>
+        <li>⬜ Chatbot for student queries</li>
+        <li>⬜ Integration with college ERP</li>
+        <li>⬜ QR code-based attendance</li>
+        <li>⬜ Parent portal for monitoring</li>
+    </ul>
+
+    <h2>Appendix</h2>
+
+    <h3>A. Folder Structure</h3>
+    <pre>
+hostel-management/
+├── backend/
+│   ├── models/
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── config/
+│   └── server.js
+├── client/
+│   ├── pages/
+│   │   ├── admin/
+│   │   └── student/
+│   ├── components/
+│   ├── js/
+│   │   ├── adminJs/
+│   │   └── student/
+│   └── css/
+├── docs/
+└── README.md
+    </pre>
+
+    <h3>B. Database Indexes</h3>
+    <pre>
+// Students
+db.students.createIndex({ email: 1 }, { unique: true })
+db.students.createIndex({ registerNumber: 1 }, { unique: true })
+
+// Complaints
+db.complaints.createIndex({ student_id: 1 })
+db.complaints.createIndex({ status: 1 })
+db.complaints.createIndex({ createdAt: -1 })
+
+// Leaves
+db.leaves.createIndex({ student_id: 1 })
+db.leaves.createIndex({ status: 1 })
+    </pre>
+
+    <div class="success">
+        <strong>Document Version:</strong> 1.0<br>
+        <strong>Last Updated:</strong> March 19, 2026<br>
+        <strong>Author:</strong> Development Team
+    </div>
+</body>
+</html>
